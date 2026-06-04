@@ -10,6 +10,15 @@ export const getExperiences = async (req, res) => {
   }
 };
 
+export const getAllAdminExperiences = async (req, res) => {
+  try {
+    const experiences = await Experience.find().sort({ displayOrder: 1, startDate: -1 });
+    return successResponse(res, experiences);
+  } catch (err) {
+    return errorResponse(res, err.message);
+  }
+};
+
 export const createExperience = async (req, res) => {
   try {
     const exp = await Experience.create(req.body);

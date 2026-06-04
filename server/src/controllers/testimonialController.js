@@ -10,6 +10,15 @@ export const getTestimonials = async (req, res) => {
   }
 };
 
+export const getAllAdminTestimonials = async (req, res) => {
+  try {
+    const testimonials = await Testimonial.find().sort({ displayOrder: 1, createdAt: -1 });
+    return successResponse(res, testimonials);
+  } catch (err) {
+    return errorResponse(res, err.message);
+  }
+};
+
 export const createTestimonial = async (req, res) => {
   try {
     const t = await Testimonial.create(req.body);

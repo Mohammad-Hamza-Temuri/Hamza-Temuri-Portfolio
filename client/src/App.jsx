@@ -20,6 +20,9 @@ const ProjectForm = lazy(() => import('./pages/admin/ProjectForm.jsx'));
 const AdminInquiries = lazy(() => import('./pages/admin/AdminInquiries.jsx'));
 const AdminProfile = lazy(() => import('./pages/admin/AdminProfile.jsx'));
 const AdminResume = lazy(() => import('./pages/admin/AdminResume.jsx'));
+const AdminExperience = lazy(() => import('./pages/admin/AdminExperience.jsx'));
+const AdminCertifications = lazy(() => import('./pages/admin/AdminCertifications.jsx'));
+const AdminTestimonials = lazy(() => import('./pages/admin/AdminTestimonials.jsx'));
 
 const Spinner = () => (
   <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -76,6 +79,9 @@ const App = () => {
             <Route path="projects" element={<AdminProjects />} />
             <Route path="projects/new" element={<ProjectForm />} />
             <Route path="projects/:id/edit" element={<ProjectForm />} />
+            <Route path="experience" element={<AdminExperience />} />
+            <Route path="certifications" element={<AdminCertifications />} />
+            <Route path="testimonials" element={<AdminTestimonials />} />
             <Route path="inquiries" element={<AdminInquiries />} />
             <Route path="profile" element={<AdminProfile />} />
             <Route path="resume" element={<AdminResume />} />

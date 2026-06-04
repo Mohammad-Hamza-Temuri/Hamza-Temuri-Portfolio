@@ -27,6 +27,7 @@ const ProjectForm = () => {
   const techStack = watch('techStack') || [];
   const features = watch('features') || [];
   const categories = watch('category') || [];
+  const excerptLen = (watch('excerpt') || '').length;
 
   const { data: existingProject } = useQuery({
     queryKey: ['project-form', id],
@@ -110,7 +111,22 @@ const ProjectForm = () => {
         <div className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <h2 style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Basic Information</h2>
           {field('Project Title *', 'title', { required: 'Title is required' })}
-          {field('Excerpt (max 200 chars)', 'excerpt')}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.4rem' }}>
+              <label style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Excerpt</label>
+              <span style={{ fontSize: '0.75rem', color: excerptLen > 180 ? '#ef4444' : excerptLen > 140 ? '#f59e0b' : 'var(--text-muted)', fontVariantNumeric: 'tabular-nums' }}>
+                {excerptLen} / 200
+              </span>
+            </div>
+            <textarea
+              {...register('excerpt')}
+              maxLength={200}
+              rows={2}
+              className="input"
+              placeholder="Short description shown on project cards and meta tags."
+              style={{ resize: 'vertical' }}
+            />
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             {field('Project URL', 'projectUrl')}
             {field('GitHub URL', 'githubUrl')}

@@ -55,26 +55,33 @@ const ProjectCard = ({ project, index = 0 }) => {
           )}
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border-subtle)' }}>
-          <Link
-            to={`/projects/${project.slug}`}
-            className="btn-secondary"
-            style={{ flex: 1, justifyContent: 'center', padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-          >
-            <FiEye size={14} /> View Details
-          </Link>
-          {project.projectUrl && (
-            <a
-              href={project.projectUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary"
-              style={{ flex: 1, justifyContent: 'center', padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-            >
-              <FiExternalLink size={14} /> Visit
-            </a>
-          )}
-        </div>
+        {(() => {
+          const hasDetailPage = !project.category?.some((c) => c === 'wordpress' || c === 'shopify');
+          return (
+            <div style={{ display: 'flex', gap: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border-subtle)' }}>
+              {hasDetailPage && (
+                <Link
+                  to={`/projects/${project.slug}`}
+                  className="btn-secondary"
+                  style={{ flex: 1, justifyContent: 'center', padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                >
+                  <FiEye size={14} /> View Details
+                </Link>
+              )}
+              {project.projectUrl && (
+                <a
+                  href={project.projectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={hasDetailPage ? 'btn-primary' : 'btn-secondary'}
+                  style={{ flex: 1, justifyContent: 'center', padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                >
+                  <FiExternalLink size={14} /> Visit
+                </a>
+              )}
+            </div>
+          );
+        })()}
       </div>
     </motion.div>
   );

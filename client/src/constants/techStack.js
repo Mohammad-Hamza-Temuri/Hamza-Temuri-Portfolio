@@ -1,9 +1,10 @@
 import {
   SiHtml5, SiCss, SiJavascript, SiJquery, SiBootstrap, SiTailwindcss,
-  SiReact, SiNodedotjs, SiExpress, SiMongodb, SiWordpress, SiShopify,
-  SiPhp, SiGit, SiGithub, SiFigma, SiCloudinary,
+  SiReact, SiNodedotjs, SiExpress, SiMongodb, SiSupabase, SiFirebase,
+  SiWordpress, SiShopify, SiGit, SiGithub, SiFigma, SiCloudinary,
 } from 'react-icons/si';
 import { FaServer } from 'react-icons/fa';
+import { FiTerminal, FiCode } from 'react-icons/fi';
 
 export const techCategories = [
   {
@@ -24,8 +25,7 @@ export const techCategories = [
     label: 'Backend',
     items: [
       { name: 'Node.js', Icon: SiNodedotjs, color: '#339933' },
-      { name: 'Express.js', Icon: SiExpress, color: '#000000' },
-      { name: 'PHP', Icon: SiPhp, color: '#777BB4' },
+      { name: 'Express.js', Icon: SiExpress, color: '#888888' },
     ],
   },
   {
@@ -33,6 +33,8 @@ export const techCategories = [
     label: 'Database',
     items: [
       { name: 'MongoDB', Icon: SiMongodb, color: '#47A248' },
+      { name: 'Supabase', Icon: SiSupabase, color: '#3ECF8E' },
+      { name: 'Firebase', Icon: SiFirebase, color: '#FFCA28' },
     ],
   },
   {
@@ -40,12 +42,6 @@ export const techCategories = [
     label: 'CMS',
     items: [
       { name: 'WordPress', Icon: SiWordpress, color: '#21759B' },
-    ],
-  },
-  {
-    id: 'ecommerce',
-    label: 'Ecommerce',
-    items: [
       { name: 'Shopify', Icon: SiShopify, color: '#96BF48' },
     ],
   },
@@ -54,10 +50,12 @@ export const techCategories = [
     label: 'Tools',
     items: [
       { name: 'Git', Icon: SiGit, color: '#F05032' },
-      { name: 'GitHub', Icon: SiGithub, color: '#181717' },
+      { name: 'GitHub', Icon: SiGithub, color: '#6e40c9' },
       { name: 'Figma', Icon: SiFigma, color: '#F24E1E' },
       { name: 'Cloudinary', Icon: SiCloudinary, color: '#3448C5' },
       { name: 'REST APIs', Icon: FaServer, color: '#6366f1' },
+      { name: 'Claude Code', Icon: FiTerminal, color: '#CC785C' },
+      { name: 'Vibe Code', Icon: FiCode, color: '#0ea5e9' },
     ],
   },
 ];

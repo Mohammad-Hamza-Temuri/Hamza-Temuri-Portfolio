@@ -10,6 +10,15 @@ export const getCertifications = async (req, res) => {
   }
 };
 
+export const getAllAdminCertifications = async (req, res) => {
+  try {
+    const certs = await Certification.find().sort({ displayOrder: 1, createdAt: -1 });
+    return successResponse(res, certs);
+  } catch (err) {
+    return errorResponse(res, err.message);
+  }
+};
+
 export const createCertification = async (req, res) => {
   try {
     const cert = await Certification.create(req.body);

@@ -40,7 +40,7 @@ const TechStack = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25 }}
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '1rem' }}
+            style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1rem' }}
           >
             {category?.items.map((tech, i) => {
               const Icon = tech.Icon;
@@ -52,7 +52,7 @@ const TechStack = () => {
                   transition={{ duration: 0.2, delay: i * 0.04 }}
                   whileHover={{ scale: 1.04, transition: { duration: 0.15 } }}
                   className="card"
-                  style={{ padding: '1.25rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem' }}
+                  style={{ padding: '1.25rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem', width: '130px', flexShrink: 0 }}
                 >
                   <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: `${tech.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Icon size={24} style={{ color: tech.color }} />

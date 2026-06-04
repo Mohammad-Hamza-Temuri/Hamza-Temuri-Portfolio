@@ -1,15 +1,9 @@
 import { motion } from 'framer-motion';
 import { FiArrowRight, FiDownload, FiMapPin, FiMail } from 'react-icons/fi';
 import TypewriterText from '../shared/TypewriterText.jsx';
+import myImage from '../../assets/my-image.png';
 
-const roles = ['Full Stack Developer', 'MERN Stack Expert', 'WordPress Developer', 'Shopify Developer'];
-
-const floatAnim = {
-  animate: {
-    y: [0, -12, 0],
-    transition: { duration: 4, repeat: Infinity, ease: 'easeInOut' },
-  },
-};
+const roles = ['MERN Stack Developer', 'WordPress Developer', 'Shopify Developer'];
 
 const Hero = ({ profile }) => {
   const handleScroll = (id) => {
@@ -39,22 +33,25 @@ const Hero = ({ profile }) => {
 
       <div className="container-custom" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '4rem', alignItems: 'center' }}>
+
           {/* Left — Content */}
           <div style={{ maxWidth: '700px' }}>
             {/* Availability */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.35rem 0.9rem', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.25)', borderRadius: '9999px' }}>
-                <div className="pulse-dot" />
-                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#22c55e' }}>
-                  Available for Freelance Projects
-                </span>
-              </div>
-            </motion.div>
+            {profile?.isAvailable !== false && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.35rem 0.9rem', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.25)', borderRadius: '9999px' }}>
+                  <div className="pulse-dot" />
+                  <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#22c55e' }}>
+                    Available for Freelance Projects
+                  </span>
+                </div>
+              </motion.div>
+            )}
 
             {/* Headline */}
             <motion.h1
@@ -109,7 +106,7 @@ const Hero = ({ profile }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '3rem' }}
+              style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}
             >
               <button className="btn-primary" onClick={() => handleScroll('contact')} style={{ fontSize: '1rem', padding: '0.85rem 2rem' }}>
                 Hire Me <FiArrowRight size={16} />
@@ -121,65 +118,59 @@ const Hero = ({ profile }) => {
                 <FiDownload size={16} /> Resume
               </a>
             </motion.div>
-
-            {/* Quick stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', paddingTop: '2rem', borderTop: '1px solid var(--border-subtle)' }}
-            >
-              {[
-                { value: '3+', label: 'Years Experience' },
-                { value: '50+', label: 'Projects Delivered' },
-                { value: '5', label: 'Companies Worked' },
-                { value: '100%', label: 'Client Satisfaction' },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
-                    {stat.value}
-                  </div>
-                  <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.1rem' }}>
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </motion.div>
           </div>
 
-          {/* Right — Visual card */}
+          {/* Right — Photo */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
             style={{ display: 'none' }}
             className="hero-right"
           >
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              style={{
-                width: '300px',
+            <div style={{ position: 'relative' }}>
+              {/* Accent glow behind image */}
+              <div style={{ position: 'absolute', inset: '-12px', borderRadius: '32px', background: 'linear-gradient(135deg, var(--accent) 0%, transparent 60%)', opacity: 0.15, zIndex: 0 }} />
+
+              {/* Photo frame */}
+              <div style={{
+                position: 'relative',
+                zIndex: 1,
+                width: '320px',
+                height: '400px',
+                borderRadius: '24px',
+                overflow: 'hidden',
+                border: '2px solid var(--accent-border)',
+                boxShadow: '0 24px 60px rgba(0,0,0,0.18), 0 0 0 1px var(--border-default)',
+              }}>
+                <img
+                  src={myImage}
+                  alt="Muhammad Hamza Temuri"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }}
+                />
+              </div>
+
+              {/* Floating badge */}
+              <div style={{
+                position: 'absolute',
+                bottom: '-1rem',
+                left: '-1rem',
+                zIndex: 2,
                 background: 'var(--bg-elevated)',
                 border: '1px solid var(--border-default)',
-                borderRadius: '20px',
-                padding: '1.5rem',
-                boxShadow: 'var(--shadow-xl)',
-              }}
-            >
-              {/* Profile photo placeholder */}
-              <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--accent-bg)', border: '2px solid var(--accent-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', fontSize: '2rem', fontWeight: 800, color: 'var(--accent)' }}>
-                HT
+                borderRadius: '12px',
+                padding: '0.6rem 1rem',
+                boxShadow: 'var(--shadow-lg)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}>
+                <div className="pulse-dot" />
+                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#22c55e', whiteSpace: 'nowrap' }}>Open to Work</span>
               </div>
-              <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.25rem' }}>Muhammad Hamza Temuri</h3>
-              <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Full Stack Developer</p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                {['WordPress', 'Shopify', 'MERN', 'SEO'].map((t) => (
-                  <span key={t} className="badge">{t}</span>
-                ))}
-              </div>
-            </motion.div>
+            </div>
           </motion.div>
+
         </div>
       </div>
       <style>{`@media(min-width:1024px) { .hero-right { display: block !important; } }`}</style>

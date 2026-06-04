@@ -46,10 +46,10 @@ const Home = () => {
       <StatsBar />
       <About />
       <Services />
+      <Projects />
       <USP />
       <TechStack />
       <Experience />
-      <Projects />
       <Certifications />
       <Testimonials />
       <Contact profile={profile} />

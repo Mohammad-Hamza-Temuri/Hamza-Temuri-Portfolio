@@ -12,8 +12,9 @@ const filters = [
   { id: 'mern', label: 'MERN' },
   { id: 'wordpress', label: 'WordPress' },
   { id: 'shopify', label: 'Shopify' },
-  { id: 'custom', label: 'Custom Dev' },
 ];
+
+const PAGE_SIZE = 6;
 
 const courtKonnect = {
   _id: 'ck',
@@ -30,6 +31,7 @@ const courtKonnect = {
 
 const Projects = () => {
   const [activeFilter, setActiveFilter] = useState('all');
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const { data, isLoading } = useQuery({
     queryKey: ['projects'],
     queryFn: () => projectService.getAll().then((r) => r.data),
@@ -40,6 +42,13 @@ const Projects = () => {
   const filtered = activeFilter === 'all'
     ? allProjects
     : allProjects.filter((p) => p.category?.includes(activeFilter));
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
+
+  const handleFilterChange = (id) => {
+    setActiveFilter(id);
+    setVisibleCount(PAGE_SIZE);
+  };
 
   return (
     <section id="projects" className="section" style={{ background: 'var(--bg-base)' }}>
@@ -55,7 +64,7 @@ const Projects = () => {
           {filters.map((f) => (
             <button
               key={f.id}
-              onClick={() => setActiveFilter(f.id)}
+              onClick={() => handleFilterChange(f.id)}
               style={{
                 padding: '0.45rem 1.1rem', borderRadius: '8px', fontSize: '0.875rem',
                 fontWeight: 600, cursor: 'pointer', border: '1px solid', transition: 'all 0.2s ease',
@@ -88,12 +97,29 @@ const Projects = () => {
                   No projects in this category yet.
                 </div>
               ) : (
-                filtered.map((project, i) => (
+                visible.map((project, i) => (
                   <ProjectCard key={project._id} project={project} index={i} />
                 ))
               )}
             </motion.div>
           </AnimatePresence>
+        )}
+
+        {/* Load More */}
+        {hasMore && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            style={{ textAlign: 'center', marginTop: '2.5rem' }}
+          >
+            <button
+              onClick={() => setVisibleCount((v) => v + PAGE_SIZE)}
+              className="btn-secondary"
+              style={{ padding: '0.75rem 2.5rem', fontSize: '0.9375rem' }}
+            >
+              Load More
+            </button>
+          </motion.div>
         )}
 
         {/* Court Konnect CTA */}
