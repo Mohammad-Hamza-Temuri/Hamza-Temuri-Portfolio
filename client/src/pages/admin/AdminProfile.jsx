@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { FiSave, FiUpload } from 'react-icons/fi';
+import { FiSave, FiUpload, FiLock } from 'react-icons/fi';
 import { profileService } from '../../services/profileService.js';
+import api from '../../services/api.js';
 
 const AdminProfile = () => {
   const [uploadedAvatarUrl, setUploadedAvatarUrl] = useState(null);
@@ -39,6 +40,14 @@ const AdminProfile = () => {
   };
 
   const onSubmit = (d) => mutation.mutate(d);
+
+  const { register: regPw, handleSubmit: handlePw, reset: resetPw, formState: { errors: pwErrors } } = useForm();
+
+  const pwMutation = useMutation({
+    mutationFn: (d) => api.put('/auth/change-password', d),
+    onSuccess: () => { toast.success('Password updated'); resetPw(); },
+    onError: (err) => toast.error(err.message || 'Failed to update password'),
+  });
 
   return (
     <div style={{ maxWidth: '720px', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -87,6 +96,31 @@ const AdminProfile = () => {
 
         <button type="submit" disabled={mutation.isPending} className="btn-primary" style={{ width: 'fit-content', opacity: mutation.isPending ? 0.7 : 1 }}>
           <FiSave size={15} /> {mutation.isPending ? 'Saving...' : 'Save Profile'}
+        </button>
+      </form>
+
+      {/* Change Password */}
+      <form onSubmit={handlePw((d) => pwMutation.mutate(d))} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <h2 style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Change Password</h2>
+          {[['Current Password', 'currentPassword'], ['New Password', 'newPassword'], ['Confirm New Password', 'confirmPassword']].map(([label, name]) => (
+            <div key={name}>
+              <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>{label}</label>
+              <input
+                type="password"
+                {...regPw(name, {
+                  required: `${label} is required`,
+                  ...(name === 'newPassword' && { minLength: { value: 8, message: 'Minimum 8 characters' } }),
+                  ...(name === 'confirmPassword' && { validate: (v, vals) => v === vals.newPassword || 'Passwords do not match' }),
+                })}
+                className="input"
+              />
+              {pwErrors[name] && <p style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.25rem' }}>{pwErrors[name].message}</p>}
+            </div>
+          ))}
+        </div>
+        <button type="submit" disabled={pwMutation.isPending} className="btn-primary" style={{ width: 'fit-content', opacity: pwMutation.isPending ? 0.7 : 1 }}>
+          <FiLock size={15} /> {pwMutation.isPending ? 'Updating...' : 'Update Password'}
         </button>
       </form>
     </div>
