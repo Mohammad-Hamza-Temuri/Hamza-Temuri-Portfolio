@@ -12,7 +12,7 @@ const strengths = [
 ];
 
 const About = () => (
-  <section id="about" className="section" style={{ background: 'var(--bg-subtle)' }}>
+  <section id="about" className="section" style={{ background: 'var(--bg-subtle)', overflow: 'hidden' }}>
     <div className="container-custom">
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'center' }}>
         <motion.div {...slideInLeft}>
@@ -64,12 +64,7 @@ const About = () => (
         </motion.div>
       </div>
     </div>
-    <style>{`
-      @media(max-width:768px) {
-        #about .container-custom > div { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
-        #about { overflow: hidden; }
-      }
-    `}</style>
+    <style>{`@media(max-width:768px){ #about .container-custom > div { grid-template-columns: 1fr !important; gap: 2.5rem !important; } }`}</style>
   </section>
 );
 
