@@ -32,7 +32,7 @@ const Hero = ({ profile }) => {
       <div style={{ position: 'absolute', bottom: '20%', left: '5%', width: '350px', height: '350px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
       <div className="container-custom" style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '4rem', alignItems: 'center' }}>
+        <div className="hero-grid" style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '4rem', alignItems: 'center' }}>
 
           {/* Left — Content */}
           <div style={{ maxWidth: '700px' }}>
@@ -106,7 +106,7 @@ const Hero = ({ profile }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}
+              className="hero-btns" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}
             >
               <button className="btn-primary" onClick={() => handleScroll('contact')} style={{ fontSize: '1rem', padding: '0.85rem 2rem' }}>
                 Hire Me <FiArrowRight size={16} />
@@ -173,7 +173,16 @@ const Hero = ({ profile }) => {
 
         </div>
       </div>
-      <style>{`@media(min-width:1024px) { .hero-right { display: block !important; } }`}</style>
+      <style>{`
+        @media(min-width:1024px) { .hero-right { display: block !important; } }
+        @media(max-width:767px) {
+          .hero-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
+          .hero-btns { flex-wrap: nowrap !important; gap: 0.5rem !important; }
+          .hero-btns .btn-primary, .hero-btns .btn-secondary, .hero-btns .btn-ghost {
+            padding: 0.7rem 1rem !important; font-size: 0.8125rem !important;
+          }
+        }
+      `}</style>
     </section>
   );
 };

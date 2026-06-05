@@ -111,7 +111,7 @@ const Contact = ({ profile }) => {
             className="card"
             style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
           >
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="contact-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>Full Name *</label>
                 <input {...register('name')} placeholder="Your name" className={`input ${errors.name ? 'error' : ''}`} />
@@ -130,7 +130,7 @@ const Contact = ({ profile }) => {
               {errors.subject && <p style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.25rem' }}>{errors.subject.message}</p>}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="contact-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>Project Type</label>
                 <select {...register('projectType')} className="input" style={{ cursor: 'pointer' }}>
@@ -171,7 +171,12 @@ const Contact = ({ profile }) => {
           </motion.form>
         </div>
       </div>
-      <style>{`@media(max-width:768px){ #contact .container-custom > div { grid-template-columns: 1fr !important; } }`}</style>
+      <style>{`
+        @media(max-width:768px) {
+          #contact .container-custom > div { grid-template-columns: 1fr !important; }
+          .contact-form-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </section>
   );
 };

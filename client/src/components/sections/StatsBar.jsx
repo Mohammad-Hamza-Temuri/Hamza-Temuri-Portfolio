@@ -12,7 +12,7 @@ const stats = [
 const StatsBar = () => (
   <section style={{ background: 'var(--bg-subtle)', borderTop: '1px solid var(--border-default)', borderBottom: '1px solid var(--border-default)', padding: '3rem 0' }}>
     <div className="container-custom">
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '2rem' }}>
+      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '2rem' }}>
         {stats.map((s, i) => (
           <motion.div
             key={s.label}
@@ -26,6 +26,7 @@ const StatsBar = () => (
         ))}
       </div>
     </div>
+    <style>{`@media(max-width:767px){ .stats-grid { grid-template-columns: repeat(2,1fr) !important; gap: 1.5rem !important; } }`}</style>
   </section>
 );
 

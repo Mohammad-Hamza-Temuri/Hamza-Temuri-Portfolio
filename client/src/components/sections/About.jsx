@@ -64,7 +64,12 @@ const About = () => (
         </motion.div>
       </div>
     </div>
-    <style>{`@media(max-width:768px){#about .container-custom>div{grid-template-columns:1fr!important;gap:2.5rem!important}}`}</style>
+    <style>{`
+      @media(max-width:768px) {
+        #about .container-custom > div { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+        #about { overflow: hidden; }
+      }
+    `}</style>
   </section>
 );
 

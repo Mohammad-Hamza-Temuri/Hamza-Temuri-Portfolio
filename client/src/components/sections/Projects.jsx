@@ -60,7 +60,7 @@ const Projects = () => {
         />
 
         {/* Filter tabs */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.5rem', marginBottom: '3rem' }}>
+        <div className="filter-tabs" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.5rem', marginBottom: '3rem' }}>
           {filters.map((f) => (
             <button
               key={f.id}
@@ -135,6 +135,20 @@ const Projects = () => {
           <Link to="/projects/court-konnect" className="btn-primary">Read the Case Study →</Link>
         </motion.div>
       </div>
+      <style>{`
+        @media(max-width:767px) {
+          .filter-tabs {
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+            justify-content: flex-start !important;
+            padding-bottom: 0.5rem !important;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+          }
+          .filter-tabs::-webkit-scrollbar { display: none; }
+          .filter-tabs button { flex-shrink: 0 !important; }
+        }
+      `}</style>
     </section>
   );
 };
