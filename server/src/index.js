@@ -4,6 +4,7 @@ import { connectDB } from './config/db.js';
 import { config } from './config/env.js';
 
 const start = async () => {
+  console.log('MONGODB_URI set:', !!process.env.MONGODB_URI, '| starts with:', process.env.MONGODB_URI?.slice(0, 20));
   await connectDB();
 
   const server = app.listen(config.port, () => {
