@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { FiCheck, FiArrowRight } from 'react-icons/fi';
-import SectionHeader from '../shared/SectionHeader.jsx';
-import { slideInLeft, slideInRight, staggerChild } from '../../utils/animations.js';
+import { slideInLeft, slideInRight } from '../../utils/animations.js';
 
 const strengths = [
   'Custom WordPress & Shopify solutions for real businesses',

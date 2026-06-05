@@ -6,6 +6,7 @@ const TypewriterText = ({ phrases, speed = 80, deleteSpeed = 40, pause = 2000 })
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
+    if (!phrases?.length) return;
     const current = phrases[phraseIndex];
     const timeout = setTimeout(() => {
       if (!isDeleting) {

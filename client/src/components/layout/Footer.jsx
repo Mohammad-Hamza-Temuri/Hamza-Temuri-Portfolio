@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { FiMail, FiPhone, FiMapPin, FiDownload, FiGithub, FiLinkedin } from 'react-icons/fi';
 import { navLinks } from '../../constants/navigation.js';
 

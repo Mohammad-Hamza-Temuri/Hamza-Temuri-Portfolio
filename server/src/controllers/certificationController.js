@@ -30,7 +30,7 @@ export const createCertification = async (req, res) => {
 
 export const updateCertification = async (req, res) => {
   try {
-    const cert = await Certification.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const cert = await Certification.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!cert) return errorResponse(res, 'Certification not found', 404);
     return successResponse(res, cert, 'Certification updated');
   } catch (err) {
@@ -40,7 +40,8 @@ export const updateCertification = async (req, res) => {
 
 export const deleteCertification = async (req, res) => {
   try {
-    await Certification.findByIdAndDelete(req.params.id);
+    const cert = await Certification.findByIdAndDelete(req.params.id);
+    if (!cert) return errorResponse(res, 'Certification not found', 404);
     return successResponse(res, null, 'Certification deleted');
   } catch (err) {
     return errorResponse(res, err.message);

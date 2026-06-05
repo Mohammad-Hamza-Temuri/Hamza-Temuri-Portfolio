@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FiCheck, FiArrowLeft, FiLayers, FiShield, FiCalendar, FiUsers, FiBarChart2, FiStar } from 'react-icons/fi';
+import { FiCheck, FiArrowLeft, FiLayers, FiShield, FiUsers, FiBarChart2, FiStar } from 'react-icons/fi';
 
 const techStack = ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Tailwind CSS', 'JWT', 'REST API', 'Mongoose'];
 

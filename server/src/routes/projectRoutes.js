@@ -9,11 +9,11 @@ const router = Router();
 
 router.get('/', getPublicProjects);
 router.get('/featured', getFeaturedProjects);
-router.get('/:slug', getProjectBySlug);
-
 router.get('/admin/all', protect, getAllAdminProjects);
 router.post('/admin', protect, createProject);
 router.put('/admin/:id', protect, updateProject);
 router.delete('/admin/:id', protect, deleteProject);
+
+router.get('/:slug', getProjectBySlug);
 
 export default router;

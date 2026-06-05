@@ -30,7 +30,7 @@ export const createTestimonial = async (req, res) => {
 
 export const updateTestimonial = async (req, res) => {
   try {
-    const t = await Testimonial.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const t = await Testimonial.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!t) return errorResponse(res, 'Testimonial not found', 404);
     return successResponse(res, t, 'Testimonial updated');
   } catch (err) {
@@ -40,7 +40,8 @@ export const updateTestimonial = async (req, res) => {
 
 export const deleteTestimonial = async (req, res) => {
   try {
-    await Testimonial.findByIdAndDelete(req.params.id);
+    const t = await Testimonial.findByIdAndDelete(req.params.id);
+    if (!t) return errorResponse(res, 'Testimonial not found', 404);
     return successResponse(res, null, 'Testimonial deleted');
   } catch (err) {
     return errorResponse(res, err.message);

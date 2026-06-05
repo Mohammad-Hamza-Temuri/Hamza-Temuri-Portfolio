@@ -54,7 +54,8 @@ const TestimonialForm = ({ initial, onSave, onCancel, isSaving }) => {
       const res = await profileService.uploadImage(fd);
       setAvatarPreview(res.data.url);
       setAvatarData({ url: res.data.url, publicId: res.data.publicId });
-    } catch {
+    } catch (err) {
+      console.error('Avatar upload failed:', err);
       toast.error('Avatar upload failed');
     } finally {
       setUploading(false);
@@ -153,8 +154,8 @@ const AdminTestimonials = () => {
         ? api.put(`/testimonials/admin/${editing._id}`, body)
         : api.post('/testimonials/admin', body),
     onSuccess: () => {
-      qc.invalidateQueries(['admin-testimonials']);
-      qc.invalidateQueries(['testimonials']);
+      qc.invalidateQueries({ queryKey: ['admin-testimonials'] });
+      qc.invalidateQueries({ queryKey: ['testimonials'] });
       toast.success(editing?._id ? 'Testimonial updated' : 'Testimonial added');
       setEditing(null);
     },
@@ -164,8 +165,8 @@ const AdminTestimonials = () => {
   const deleteMutation = useMutation({
     mutationFn: (id) => api.delete(`/testimonials/admin/${id}`),
     onSuccess: () => {
-      qc.invalidateQueries(['admin-testimonials']);
-      qc.invalidateQueries(['testimonials']);
+      qc.invalidateQueries({ queryKey: ['admin-testimonials'] });
+      qc.invalidateQueries({ queryKey: ['testimonials'] });
       toast.success('Deleted');
     },
     onError: () => toast.error('Failed to delete'),

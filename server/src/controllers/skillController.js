@@ -21,7 +21,7 @@ export const createSkill = async (req, res) => {
 
 export const updateSkill = async (req, res) => {
   try {
-    const skill = await Skill.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const skill = await Skill.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!skill) return errorResponse(res, 'Skill not found', 404);
     return successResponse(res, skill, 'Skill updated');
   } catch (err) {
@@ -31,7 +31,8 @@ export const updateSkill = async (req, res) => {
 
 export const deleteSkill = async (req, res) => {
   try {
-    await Skill.findByIdAndDelete(req.params.id);
+    const skill = await Skill.findByIdAndDelete(req.params.id);
+    if (!skill) return errorResponse(res, 'Skill not found', 404);
     return successResponse(res, null, 'Skill deleted');
   } catch (err) {
     return errorResponse(res, err.message);

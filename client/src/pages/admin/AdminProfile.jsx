@@ -6,7 +6,7 @@ import { FiSave, FiUpload } from 'react-icons/fi';
 import { profileService } from '../../services/profileService.js';
 
 const AdminProfile = () => {
-  const [avatarPreview, setAvatarPreview] = useState('');
+  const [uploadedAvatarUrl, setUploadedAvatarUrl] = useState(null);
   const { register, handleSubmit, reset } = useForm();
 
   const { data } = useQuery({
@@ -15,8 +15,10 @@ const AdminProfile = () => {
   });
 
   useEffect(() => {
-    if (data) { reset(data); setAvatarPreview(data.avatar?.url || ''); }
+    if (data) reset(data);
   }, [data, reset]);
+
+  const avatarPreview = uploadedAvatarUrl ?? data?.avatar?.url ?? '';
 
   const mutation = useMutation({
     mutationFn: (d) => profileService.update(d),
@@ -31,9 +33,9 @@ const AdminProfile = () => {
     fd.append('image', file);
     try {
       const res = await profileService.uploadImage(fd);
-      setAvatarPreview(res.data.url);
+      setUploadedAvatarUrl(res.data.url);
       mutation.mutate({ avatar: { url: res.data.url, publicId: res.data.publicId } });
-    } catch { toast.error('Upload failed'); }
+    } catch (err) { console.error('Upload failed:', err); toast.error('Upload failed'); }
   };
 
   const onSubmit = (d) => mutation.mutate(d);

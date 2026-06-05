@@ -41,7 +41,8 @@ const CertForm = ({ initial, onSave, onCancel, isSaving }) => {
       const res = await profileService.uploadImage(fd);
       setImagePreview(res.data.url);
       setImageData({ url: res.data.url, publicId: res.data.publicId });
-    } catch {
+    } catch (err) {
+      console.error('Image upload failed:', err);
       toast.error('Image upload failed');
     } finally {
       setUploading(false);
@@ -132,8 +133,8 @@ const AdminCertifications = () => {
         ? api.put(`/certifications/admin/${editing._id}`, body)
         : api.post('/certifications/admin', body),
     onSuccess: () => {
-      qc.invalidateQueries(['admin-certifications']);
-      qc.invalidateQueries(['certifications']);
+      qc.invalidateQueries({ queryKey: ['admin-certifications'] });
+      qc.invalidateQueries({ queryKey: ['certifications'] });
       toast.success(editing?._id ? 'Certification updated' : 'Certification added');
       setEditing(null);
     },
@@ -143,8 +144,8 @@ const AdminCertifications = () => {
   const deleteMutation = useMutation({
     mutationFn: (id) => api.delete(`/certifications/admin/${id}`),
     onSuccess: () => {
-      qc.invalidateQueries(['admin-certifications']);
-      qc.invalidateQueries(['certifications']);
+      qc.invalidateQueries({ queryKey: ['admin-certifications'] });
+      qc.invalidateQueries({ queryKey: ['certifications'] });
       toast.success('Deleted');
     },
     onError: () => toast.error('Failed to delete'),

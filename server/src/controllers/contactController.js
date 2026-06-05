@@ -8,8 +8,12 @@ export const submitContact = async (req, res) => {
       ...req.body,
       ipAddress: req.ip,
     });
-    sendContactNotification(contact);
-    sendAutoReply(contact);
+    try {
+      await sendContactNotification(contact);
+      await sendAutoReply(contact);
+    } catch (emailErr) {
+      console.error('Email notification failed:', emailErr);
+    }
     return successResponse(res, null, "Message sent! I'll get back to you within 24 hours.", 201);
   } catch (err) {
     return errorResponse(res, err.message);

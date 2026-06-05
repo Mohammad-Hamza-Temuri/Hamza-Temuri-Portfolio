@@ -16,7 +16,7 @@ const AdminProjects = () => {
 
   const deleteMutation = useMutation({
     mutationFn: (id) => projectService.delete(id),
-    onSuccess: () => { qc.invalidateQueries(['admin-projects']); toast.success('Project deleted'); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-projects'] }); toast.success('Project deleted'); },
     onError: () => toast.error('Failed to delete project'),
   });
 

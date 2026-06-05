@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import { FiSave, FiArrowLeft, FiUpload, FiX } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { projectService } from '../../services/projectService.js';
@@ -45,7 +44,7 @@ const ProjectForm = () => {
   const mutation = useMutation({
     mutationFn: (data) => isEdit ? projectService.update(id, data) : projectService.create(data),
     onSuccess: () => {
-      qc.invalidateQueries(['admin-projects']);
+      qc.invalidateQueries({ queryKey: ['admin-projects'] });
       toast.success(isEdit ? 'Project updated' : 'Project created');
       navigate('/admin/projects');
     },
@@ -63,7 +62,7 @@ const ProjectForm = () => {
       setValue('featuredImage', { url: res.data.url, publicId: res.data.publicId });
       setFeaturedImagePreview(res.data.url);
       toast.success('Image uploaded');
-    } catch { toast.error('Upload failed'); }
+    } catch (err) { console.error('Upload failed:', err); toast.error('Upload failed'); }
     finally { setUploading(false); }
   };
 

@@ -50,7 +50,7 @@ const Testimonials = () => {
               </blockquote>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
                 <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'var(--accent-bg)', border: '2px solid var(--accent-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: 'var(--accent)', fontSize: '0.875rem', overflow: 'hidden' }}>
-                  {t.avatar?.url ? <img src={t.avatar.url} alt={t.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : t.name[0]}
+                  {t.avatar?.url ? <img src={t.avatar.url} alt={t.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (t.name?.[0] ?? '?')}
                 </div>
                 <div style={{ textAlign: 'left' }}>
                   <div style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--text-primary)' }}>{t.name}</div>
@@ -64,8 +64,8 @@ const Testimonials = () => {
             <button onClick={prev} style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-secondary)', transition: 'all 0.2s ease' }}>
               <FiChevronLeft size={18} />
             </button>
-            {data.map((_, i) => (
-              <button key={i} onClick={() => { setDir(i > index ? 1 : -1); setIndex(i); }} style={{ width: '8px', height: '8px', borderRadius: '50%', background: i === index ? 'var(--accent)' : 'var(--border-strong)', border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.2s ease' }} />
+            {data.map((t, i) => (
+              <button key={t._id} onClick={() => { setDir(i > index ? 1 : -1); setIndex(i); }} style={{ width: '8px', height: '8px', borderRadius: '50%', background: i === index ? 'var(--accent)' : 'var(--border-strong)', border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.2s ease' }} />
             ))}
             <button onClick={next} style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-secondary)', transition: 'all 0.2s ease' }}>
               <FiChevronRight size={18} />

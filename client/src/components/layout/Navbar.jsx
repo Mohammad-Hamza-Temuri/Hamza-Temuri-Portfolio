@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiSun, FiMoon, FiMenu, FiX, FiDownload } from 'react-icons/fi';
 import { useThemeStore } from '../../store/themeStore.js';
@@ -7,6 +7,7 @@ import { navLinks } from '../../constants/navigation.js';
 
 const Navbar = () => {
   const { theme, toggleTheme } = useThemeStore();
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
@@ -33,10 +34,15 @@ const Navbar = () => {
     return () => observer.disconnect();
   }, [isHome]);
 
+  const sectionSelector = (href) => href.replace(/^\//, '');
+
   const handleNavClick = (href) => {
     setMobileOpen(false);
-    if (!isHome) return;
-    const el = document.querySelector(href);
+    if (!isHome) {
+      navigate(href.startsWith('/') ? href : `/${href}`);
+      return;
+    }
+    const el = document.querySelector(sectionSelector(href));
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -68,7 +74,7 @@ const Navbar = () => {
           {/* Desktop nav */}
           <div style={{ display: 'flex', gap: '0.25rem', flex: 1, justifyContent: 'center' }} className="hidden-mobile">
             {navLinks.map((link) => {
-              const isActive = activeSection === link.href.replace('#', '');
+              const isActive = activeSection === link.href.replace(/^\/?#/, '');
               return (
                 <a
                   key={link.href}
@@ -124,8 +130,8 @@ const Navbar = () => {
 
             {/* Hire Me */}
             <a
-              href="#contact"
-              onClick={(e) => { e.preventDefault(); handleNavClick('#contact'); }}
+              href="/#contact"
+              onClick={(e) => { e.preventDefault(); handleNavClick('/#contact'); }}
               className="btn-primary hidden-mobile"
               style={{ padding: '0.45rem 1rem', fontSize: '0.8125rem' }}
             >

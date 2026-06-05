@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Toaster } from 'react-hot-toast';
 import { useThemeStore } from './store/themeStore.js';
 import { useAuthStore } from './store/authStore.js';
@@ -23,6 +23,26 @@ const AdminResume = lazy(() => import('./pages/admin/AdminResume.jsx'));
 const AdminExperience = lazy(() => import('./pages/admin/AdminExperience.jsx'));
 const AdminCertifications = lazy(() => import('./pages/admin/AdminCertifications.jsx'));
 const AdminTestimonials = lazy(() => import('./pages/admin/AdminTestimonials.jsx'));
+
+const ScrollToHash = () => {
+  const { hash, pathname } = useLocation();
+  useEffect(() => {
+    if (!hash || pathname !== '/') return;
+    const id = hash.slice(1);
+    let attempts = 0;
+    const tryScroll = () => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      } else if (attempts < 12) {
+        attempts++;
+        setTimeout(tryScroll, 150);
+      }
+    };
+    setTimeout(tryScroll, 50);
+  }, [hash, pathname]);
+  return null;
+};
 
 const Spinner = () => (
   <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -67,6 +87,7 @@ const App = () => {
           },
         }}
       />
+      <ScrollToHash />
       <Suspense fallback={<Spinner />}>
         <Routes>
           <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />

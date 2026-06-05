@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { FiMail, FiTrash2, FiCheck } from 'react-icons/fi';
+import { FiMail, FiTrash2 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { contactService } from '../../services/contactService.js';
 
-const statusColors = { unread: '#6366f1', read: '#22c55e', replied: '#0ea5e9', archived: 'var(--text-muted)' };
 const statuses = ['all', 'unread', 'read', 'replied', 'archived'];
 
 const AdminInquiries = () => {
@@ -20,12 +19,12 @@ const AdminInquiries = () => {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, status }) => contactService.updateStatus(id, status),
-    onSuccess: () => { qc.invalidateQueries(['inquiries']); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['inquiries'] }); },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => contactService.delete(id),
-    onSuccess: () => { qc.invalidateQueries(['inquiries']); setSelected(null); toast.success('Deleted'); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['inquiries'] }); setSelected(null); toast.success('Deleted'); },
   });
 
   return (

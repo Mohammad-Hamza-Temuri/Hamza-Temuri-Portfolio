@@ -1,7 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
-import { motion } from 'framer-motion';
 import { FiExternalLink, FiGithub, FiArrowLeft, FiCheck } from 'react-icons/fi';
 import { projectService } from '../services/projectService.js';
 
