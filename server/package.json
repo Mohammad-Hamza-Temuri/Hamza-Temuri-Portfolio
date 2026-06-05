@@ -4,6 +4,7 @@
   "description": "Muhammad Hamza Temuri Portfolio Backend API",
   "type": "module",
   "main": "src/index.js",
+  "engines": { "node": ">=18" },
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js"
