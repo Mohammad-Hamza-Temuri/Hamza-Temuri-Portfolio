@@ -123,11 +123,11 @@ const AccordionCard = ({ experience, index, defaultOpen }) => {
 
         {/* Company logo — always visible */}
         <div style={{
-          width: '88px', height: '52px', flexShrink: 0,
+          width: '130px', height: '68px', flexShrink: 0,
           borderRadius: '8px', border: '1px solid var(--border-default)',
           background: 'var(--bg-elevated)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          padding: '8px', overflow: 'hidden',
+          padding: '6px', overflow: 'hidden',
         }}>
           {logo ? (
             <img
