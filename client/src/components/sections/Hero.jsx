@@ -27,9 +27,17 @@ const Hero = ({ profile }) => {
       {/* Background grid dots */}
       <div className="dot-pattern" style={{ position: 'absolute', inset: 0, opacity: 0.5, pointerEvents: 'none' }} />
 
-      {/* Gradient orbs */}
-      <div style={{ position: 'absolute', top: '15%', right: '10%', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, var(--accent-bg) 0%, transparent 70%)', pointerEvents: 'none', opacity: 0.8 }} />
-      <div style={{ position: 'absolute', bottom: '20%', left: '5%', width: '350px', height: '350px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      {/* Gradient orbs — slow float animation */}
+      <motion.div
+        animate={{ y: [0, -24, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ position: 'absolute', top: '15%', right: '10%', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, var(--accent-bg) 0%, transparent 70%)', pointerEvents: 'none', opacity: 0.8 }}
+      />
+      <motion.div
+        animate={{ y: [0, 20, 0] }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
+        style={{ position: 'absolute', bottom: '20%', left: '5%', width: '350px', height: '350px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)', pointerEvents: 'none' }}
+      />
 
       <div className="container-custom" style={{ position: 'relative', zIndex: 1 }}>
         <div className="hero-grid" style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '4rem', alignItems: 'center' }}>

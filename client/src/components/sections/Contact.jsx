@@ -11,6 +11,7 @@ import { contactService } from '../../services/contactService.js';
 const schema = z.object({
   name: z.string().min(2, 'Name is required'),
   email: z.string().email('Valid email required'),
+  phone: z.string().optional(),
   subject: z.string().min(3, 'Subject is required'),
   projectType: z.string().optional(),
   budget: z.string().optional(),
@@ -124,10 +125,16 @@ const Contact = ({ profile }) => {
               </div>
             </div>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>Subject *</label>
-              <input {...register('subject')} placeholder="What do you need help with?" className={`input ${errors.subject ? 'error' : ''}`} />
-              {errors.subject && <p style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.25rem' }}>{errors.subject.message}</p>}
+            <div className="contact-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>Subject *</label>
+                <input {...register('subject')} placeholder="What do you need help with?" className={`input ${errors.subject ? 'error' : ''}`} />
+                {errors.subject && <p style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.25rem' }}>{errors.subject.message}</p>}
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>Phone / WhatsApp <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>(optional)</span></label>
+                <input {...register('phone')} placeholder="+1 234 567 8900" className="input" />
+              </div>
             </div>
 
             <div className="contact-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>

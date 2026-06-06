@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, MotionConfig } from 'framer-motion';
 import { Toaster } from 'react-hot-toast';
 import { useThemeStore } from './store/themeStore.js';
 import { useAuthStore } from './store/authStore.js';
@@ -73,6 +73,7 @@ const App = () => {
   useEffect(() => { initTheme(); }, [initTheme]);
 
   return (
+    <MotionConfig reducedMotion="user">
     <>
       <Toaster
         position="top-right"
@@ -119,6 +120,7 @@ const App = () => {
         </Routes>
       </Suspense>
     </>
+    </MotionConfig>
   );
 };
 
