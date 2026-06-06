@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiCheck, FiArrowRight } from 'react-icons/fi';
 import { slideInLeft, slideInRight } from '../../utils/animations.js';
@@ -11,11 +12,21 @@ const strengths = [
   'Clean, maintainable code with long-term support',
 ];
 
-const About = () => (
+const About = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    setIsMobile(mq.matches);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  return (
   <section id="about" className="section" style={{ background: 'var(--bg-subtle)', overflow: 'hidden' }}>
     <div className="container-custom">
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'center' }}>
-        <motion.div {...slideInLeft}>
+        <motion.div {...slideInLeft(isMobile)}>
           <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '1rem' }}>
             <span className="section-label">About Me</span>
           </div>
@@ -36,7 +47,7 @@ const About = () => (
           </div>
         </motion.div>
 
-        <motion.div {...slideInRight} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <motion.div {...slideInRight(isMobile)} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div className="card" style={{ padding: '1.5rem' }}>
             <h4 style={{ fontSize: '0.8125rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '1rem' }}>Education</h4>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -66,6 +77,7 @@ const About = () => (
     </div>
     <style>{`@media(max-width:768px){ #about .container-custom > div { grid-template-columns: 1fr !important; gap: 2.5rem !important; } }`}</style>
   </section>
-);
+  );
+};
 
 export default About;

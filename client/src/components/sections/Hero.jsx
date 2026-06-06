@@ -36,6 +36,24 @@ const Hero = ({ profile }) => {
 
           {/* Left — Content */}
           <div style={{ maxWidth: '700px' }}>
+            {/* Mobile avatar — circular photo shown only below 1024px, above headline */}
+            <motion.div
+              className="hero-avatar-mobile"
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              style={{ display: 'none', justifyContent: 'center', marginBottom: '1.75rem' }}
+            >
+              <div style={{
+                width: '130px', height: '130px', borderRadius: '50%',
+                overflow: 'hidden', border: '3px solid var(--accent-border)',
+                boxShadow: '0 0 0 6px var(--accent-bg), var(--shadow-lg)',
+                flexShrink: 0,
+              }}>
+                <img src={myImage} alt="Muhammad Hamza Temuri" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
+              </div>
+            </motion.div>
+
             {/* Availability */}
             {profile?.isAvailable !== false && (
               <motion.div
@@ -175,6 +193,7 @@ const Hero = ({ profile }) => {
       </div>
       <style>{`
         @media(min-width:1024px) { .hero-right { display: block !important; } }
+        @media(max-width:1023px) { .hero-avatar-mobile { display: flex !important; } }
         @media(max-width:767px) {
           .hero-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
           .hero-btns { flex-wrap: nowrap !important; gap: 0.5rem !important; }

@@ -7,7 +7,10 @@ export const getPublicProjects = async (req, res) => {
     const { category } = req.query;
     const filter = { status: 'published' };
     if (category && category !== 'all') filter.category = category;
-    const projects = await Project.find(filter).sort({ displayOrder: 1, createdAt: -1 });
+    const projects = await Project.find(filter)
+      .select('title slug excerpt featuredImage techStack category isFeatured isCaseStudy displayOrder')
+      .sort({ displayOrder: 1, createdAt: -1 })
+      .lean();
     return successResponse(res, projects);
   } catch (err) {
     return errorResponse(res, err.message);
@@ -25,7 +28,7 @@ export const getFeaturedProjects = async (req, res) => {
 
 export const getProjectBySlug = async (req, res) => {
   try {
-    const project = await Project.findOne({ slug: req.params.slug, status: 'published' });
+    const project = await Project.findOne({ slug: req.params.slug, status: 'published' }).lean();
     if (!project) return errorResponse(res, 'Project not found', 404);
     return successResponse(res, project);
   } catch (err) {

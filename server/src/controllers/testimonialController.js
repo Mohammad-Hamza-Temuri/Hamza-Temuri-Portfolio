@@ -3,7 +3,9 @@ import { successResponse, errorResponse } from '../utils/apiResponse.js';
 
 export const getTestimonials = async (req, res) => {
   try {
-    const testimonials = await Testimonial.find({ isPublished: true }).sort({ displayOrder: 1 });
+    const testimonials = await Testimonial.find({ isPublished: true })
+      .sort({ displayOrder: 1 })
+      .lean();
     return successResponse(res, testimonials);
   } catch (err) {
     return errorResponse(res, err.message);

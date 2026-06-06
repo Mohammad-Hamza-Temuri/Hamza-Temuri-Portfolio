@@ -1,7 +1,18 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiMapPin, FiCalendar, FiChevronDown } from 'react-icons/fi';
 import SectionHeader from '../shared/SectionHeader.jsx';
-import TimelineItem from '../shared/TimelineItem.jsx';
+import { staggerChild } from '../../utils/animations.js';
 import api from '../../services/api.js';
+
+const typeLabel = { remote: 'Remote', hybrid: 'Hybrid', onsite: 'Onsite' };
+const typeColor = { remote: '#22c55e', hybrid: '#f59e0b', onsite: '#6366f1' };
+
+const formatDate = (date) => {
+  if (!date) return 'Present';
+  return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+};
 
 const fallbackExperiences = [
   {
@@ -59,6 +70,99 @@ const fallbackExperiences = [
   },
 ];
 
+const AccordionCard = ({ experience, index, defaultOpen }) => {
+  const [open, setOpen] = useState(defaultOpen);
+  const color = typeColor[experience.type] ?? 'var(--accent)';
+
+  return (
+    <motion.div {...staggerChild(index)} className="card" style={{ overflow: 'hidden' }}>
+      {/* Clickable header */}
+      <button
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          width: '100%', padding: '1.5rem', background: 'none', border: 'none',
+          cursor: 'pointer', display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between', gap: '1rem', textAlign: 'left',
+        }}
+      >
+        {/* Left: position + company */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '0.3rem' }}>
+            <h3 style={{ fontSize: '1.0625rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+              {experience.position}
+            </h3>
+            {experience.isCurrent && (
+              <span style={{
+                fontSize: '0.7rem', padding: '0.15rem 0.5rem', borderRadius: '9999px',
+                background: 'rgba(34,197,94,0.1)', color: '#22c55e',
+                border: '1px solid rgba(34,197,94,0.3)', fontWeight: 700,
+              }}>
+                Current
+              </span>
+            )}
+          </div>
+          <p style={{ fontSize: '0.9375rem', color: 'var(--accent)', fontWeight: 600, margin: 0 }}>
+            {experience.company}
+          </p>
+        </div>
+
+        {/* Right: meta + chevron */}
+        <div className="exp-meta" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.3rem', whiteSpace: 'nowrap' }}>
+            <FiCalendar size={12} />
+            {formatDate(experience.startDate)} – {experience.isCurrent ? 'Present' : formatDate(experience.endDate)}
+          </span>
+          <span style={{
+            fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '9999px',
+            background: 'var(--bg-muted)', color: 'var(--text-muted)',
+            border: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', gap: '0.3rem', whiteSpace: 'nowrap',
+          }}>
+            <FiMapPin size={10} /> {experience.location}
+          </span>
+          {experience.type && (
+            <span style={{
+              fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '9999px',
+              background: `${color}18`, color, border: `1px solid ${color}40`, whiteSpace: 'nowrap',
+            }}>
+              {typeLabel[experience.type]}
+            </span>
+          )}
+          <motion.div
+            animate={{ rotate: open ? 180 : 0 }}
+            transition={{ duration: 0.25 }}
+            style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', flexShrink: 0 }}
+          >
+            <FiChevronDown size={18} />
+          </motion.div>
+        </div>
+      </button>
+
+      {/* Expandable responsibilities */}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div style={{ padding: '0 1.5rem 1.5rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '1.25rem' }}>
+              <ul style={{ paddingLeft: '1.25rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                {experience.responsibilities?.map((r, i) => (
+                  <li key={i} style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                    {r}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
 const Experience = () => {
   const { data } = useQuery({
     queryKey: ['experience'],
@@ -76,13 +180,22 @@ const Experience = () => {
           title="Professional Experience"
           subtitle="3+ years working with agencies and companies across Pakistan, Canada, and Dubai."
         />
-        <div style={{ maxWidth: '780px', margin: '0 auto', position: 'relative' }}>
-          <div className="timeline-line" />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {experiences.map((exp, i) => (
-            <TimelineItem key={exp._id} experience={exp} index={i} isLast={i === experiences.length - 1} />
+            <AccordionCard
+              key={exp._id}
+              experience={exp}
+              index={i}
+              defaultOpen={exp.isCurrent || i === 0}
+            />
           ))}
         </div>
       </div>
+      <style>{`
+        @media(max-width:640px) {
+          .exp-meta { display: none !important; }
+        }
+      `}</style>
     </section>
   );
 };

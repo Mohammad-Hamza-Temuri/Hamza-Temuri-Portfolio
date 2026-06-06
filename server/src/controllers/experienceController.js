@@ -3,7 +3,9 @@ import { successResponse, errorResponse } from '../utils/apiResponse.js';
 
 export const getExperiences = async (req, res) => {
   try {
-    const experiences = await Experience.find({ isPublished: true }).sort({ displayOrder: 1, startDate: -1 });
+    const experiences = await Experience.find({ isPublished: true })
+      .sort({ displayOrder: 1, startDate: -1 })
+      .lean();
     return successResponse(res, experiences);
   } catch (err) {
     return errorResponse(res, err.message);

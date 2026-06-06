@@ -18,4 +18,6 @@ const experienceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+experienceSchema.index({ isPublished: 1, displayOrder: 1, startDate: -1 });
+
 export default mongoose.model('Experience', experienceSchema);

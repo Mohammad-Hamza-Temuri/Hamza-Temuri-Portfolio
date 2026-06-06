@@ -35,5 +35,6 @@ const projectSchema = new mongoose.Schema(
 );
 
 projectSchema.index({ status: 1, displayOrder: 1 });
+projectSchema.index({ slug: 1 });
 
 export default mongoose.model('Project', projectSchema);

@@ -5,6 +5,7 @@ import Hero from '../components/sections/Hero.jsx';
 import StatsBar from '../components/sections/StatsBar.jsx';
 import About from '../components/sections/About.jsx';
 import Services from '../components/sections/Services.jsx';
+import Process from '../components/sections/Process.jsx';
 import USP from '../components/sections/USP.jsx';
 import TechStack from '../components/sections/TechStack.jsx';
 import Experience from '../components/sections/Experience.jsx';
@@ -46,6 +47,7 @@ const Home = () => {
       <StatsBar />
       <About />
       <Services />
+      <Process />
       <Projects />
       <USP />
       <TechStack />

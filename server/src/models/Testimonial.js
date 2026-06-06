@@ -17,4 +17,6 @@ const testimonialSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+testimonialSchema.index({ isPublished: 1, displayOrder: 1 });
+
 export default mongoose.model('Testimonial', testimonialSchema);
