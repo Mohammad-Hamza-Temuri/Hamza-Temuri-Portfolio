@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiMapPin, FiCalendar, FiChevronDown, FiFileText, FiX, FiExternalLink } from 'react-icons/fi';
+import { FiMapPin, FiCalendar, FiChevronDown, FiFileText } from 'react-icons/fi';
 import SectionHeader from '../shared/SectionHeader.jsx';
 import { staggerChild } from '../../utils/animations.js';
 import api from '../../services/api.js';
@@ -84,132 +84,13 @@ const fallbackExperiences = [
   },
 ];
 
-const LetterModal = ({ experience, onClose }) => {
-  const [blobUrl, setBlobUrl] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 768px)');
-    const handler = (e) => setIsMobile(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
-
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [onClose]);
-
-  useEffect(() => {
-    let url;
-    let mounted = true;
-    fetch(getLetterUrl(experience._id))
-      .then((res) => { if (!res.ok) throw new Error(); return res.blob(); })
-      .then((blob) => {
-        if (!mounted) return;
-        url = URL.createObjectURL(blob);
-        setBlobUrl({ url, isImage: blob.type.startsWith('image/') });
-        setLoading(false);
-      })
-      .catch(() => { if (mounted) { setError(true); setLoading(false); } });
-    return () => { mounted = false; if (url) URL.revokeObjectURL(url); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [experience._id]);
-
-  const isPdf = blobUrl && !blobUrl.isImage;
-
-  return (
-    <div
-      style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.25rem' }}
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.2 }}
-        style={{ width: '100%', maxWidth: '860px', height: '90vh', background: 'var(--bg-elevated)', borderRadius: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 24px 64px rgba(0,0,0,0.5)' }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div style={{ padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-default)', flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <FiFileText size={16} style={{ color: 'var(--accent)' }} />
-            <span style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--text-primary)' }}>
-              Experience Letter — {experience.company}
-            </span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            {isPdf && (
-              <a
-                href={blobUrl.url}
-                download={`${experience.company}-experience-letter.pdf`}
-                style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid var(--border-default)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', textDecoration: 'none' }}
-                title="Download PDF"
-              >
-                <FiExternalLink size={14} />
-              </a>
-            )}
-            <button onClick={onClose} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid var(--border-default)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
-              <FiX size={16} />
-            </button>
-          </div>
-        </div>
-        <div style={{ flex: 1, overflow: 'auto', background: '#fff', display: 'flex', alignItems: blobUrl?.isImage ? 'flex-start' : 'stretch' }}>
-          {loading && <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ color: '#888', fontSize: '0.9rem' }}>Loading…</span></div>}
-          {error && <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ color: '#ef4444', fontSize: '0.9rem' }}>Failed to load letter.</span></div>}
-          {blobUrl && (
-            blobUrl.isImage ? (
-              <img
-                src={blobUrl.url}
-                alt={`${experience.company} experience letter`}
-                style={{ width: '100%', height: 'auto', display: 'block' }}
-              />
-            ) : isMobile ? (
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.25rem', padding: '2rem', background: '#f9f9f9' }}>
-                <FiFileText size={52} style={{ color: '#6366f1', opacity: 0.6 }} />
-                <p style={{ color: '#555', textAlign: 'center', margin: 0, fontSize: '0.9rem', lineHeight: 1.6 }}>
-                  PDF preview isn't available inline on mobile.
-                </p>
-                <a
-                  href={blobUrl.url}
-                  download={`${experience.company}-experience-letter.pdf`}
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                    padding: '0.75rem 1.75rem', borderRadius: '10px',
-                    background: '#6366f1', color: '#fff',
-                    fontWeight: 700, fontSize: '0.9375rem',
-                    textDecoration: 'none',
-                  }}
-                >
-                  <FiExternalLink size={15} /> Open / Download PDF
-                </a>
-              </div>
-            ) : (
-              <iframe
-                src={blobUrl.url}
-                title={`${experience.company} experience letter`}
-                style={{ width: '100%', height: '100%', border: 'none', flex: 1 }}
-              />
-            )
-          )}
-        </div>
-      </motion.div>
-    </div>
-  );
-};
-
 const AccordionCard = ({ experience, index, defaultOpen }) => {
   const [open, setOpen] = useState(defaultOpen);
-  const [letterOpen, setLetterOpen] = useState(false);
   const color = typeColor[experience.type] ?? 'var(--accent)';
   const logo = companyLogos[experience.company];
   const initials = experience.company.split(' ').slice(0, 2).map((w) => w[0]).join('');
 
   return (
-    <>
     <motion.div {...staggerChild(index)} className="card" style={{ overflow: 'hidden' }}>
       {/* Clickable header */}
       <button
@@ -316,18 +197,21 @@ const AccordionCard = ({ experience, index, defaultOpen }) => {
                     )}
                   </div>
                   {experience.letter?.uploadedAt && (
-                    <button
-                      onClick={() => setLetterOpen(true)}
+                    <a
+                      href={getLetterUrl(experience._id)}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       style={{
                         width: '180px', padding: '0.5rem 0.75rem',
                         borderRadius: '8px', border: '1px solid var(--accent-border)',
                         background: 'var(--accent-bg)', color: 'var(--accent)',
-                        cursor: 'pointer', fontSize: '0.8125rem', fontWeight: 600,
+                        fontSize: '0.8125rem', fontWeight: 600,
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
+                        textDecoration: 'none',
                       }}
                     >
                       <FiFileText size={13} /> View Letter
-                    </button>
+                    </a>
                   )}
                 </div>
               </div>
@@ -336,11 +220,6 @@ const AccordionCard = ({ experience, index, defaultOpen }) => {
         )}
       </AnimatePresence>
     </motion.div>
-
-    <AnimatePresence>
-      {letterOpen && <LetterModal experience={experience} onClose={() => setLetterOpen(false)} />}
-    </AnimatePresence>
-    </>
   );
 };
 
