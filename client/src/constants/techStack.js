@@ -3,6 +3,7 @@ import {
   SiReact, SiNodedotjs, SiExpress, SiMongodb, SiSupabase, SiFirebase,
   SiWordpress, SiShopify, SiGithub, SiFigma, SiCloudinary,
   SiOpenai, SiTrello, SiSlack, SiGoogledrive,
+  SiVercel, SiRailway, SiRender,
 } from 'react-icons/si';
 import { FiTerminal, FiCode } from 'react-icons/fi';
 
@@ -56,6 +57,9 @@ export const techCategories = [
       { name: 'Trello', Icon: SiTrello, color: '#0052CC' },
       { name: 'Slack', Icon: SiSlack, color: '#4A154B' },
       { name: 'Google Drive', Icon: SiGoogledrive, color: '#1FA463' },
+      { name: 'Vercel', Icon: SiVercel, color: '#888888' },
+      { name: 'Railway', Icon: SiRailway, color: '#7C3AED' },
+      { name: 'Render', Icon: SiRender, color: '#46E3B7' },
       { name: 'Claude Code', Icon: FiTerminal, color: '#CC785C' },
       { name: 'Vibe Code', Icon: FiCode, color: '#0ea5e9' },
     ],
