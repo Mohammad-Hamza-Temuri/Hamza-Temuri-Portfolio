@@ -8,7 +8,7 @@ export const getPublicProjects = async (req, res) => {
     const filter = { status: 'published' };
     if (category && category !== 'all') filter.category = category;
     const projects = await Project.find(filter)
-      .select('title slug excerpt featuredImage techStack category isFeatured isCaseStudy displayOrder')
+      .select('title slug excerpt featuredImage techStack category isFeatured isCaseStudy displayOrder projectUrl')
       .sort({ displayOrder: 1, createdAt: -1 })
       .lean();
     return successResponse(res, projects);
