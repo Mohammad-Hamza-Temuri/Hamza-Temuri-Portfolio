@@ -49,3 +49,43 @@ export const deleteExperience = async (req, res) => {
     return errorResponse(res, err.message);
   }
 };
+
+export const uploadExperienceLetter = async (req, res) => {
+  try {
+    if (!req.file) return errorResponse(res, 'No file provided', 400);
+    const exp = await Experience.findByIdAndUpdate(
+      req.params.id,
+      {
+        'letter.data': req.file.buffer,
+        'letter.contentType': req.file.mimetype,
+        'letter.filename': req.file.originalname,
+        'letter.uploadedAt': new Date(),
+      },
+      { new: true }
+    );
+    if (!exp) return errorResponse(res, 'Experience not found', 404);
+    return successResponse(res, {
+      filename: exp.letter.filename,
+      contentType: exp.letter.contentType,
+      uploadedAt: exp.letter.uploadedAt,
+    }, 'Letter uploaded');
+  } catch (err) {
+    return errorResponse(res, err.message);
+  }
+};
+
+export const getExperienceLetter = async (req, res) => {
+  try {
+    const exp = await Experience.findById(req.params.id).select('+letter.data letter.contentType letter.filename').lean();
+    if (!exp?.letter?.data) return res.status(404).json({ message: 'No letter uploaded' });
+    const buffer = Buffer.isBuffer(exp.letter.data)
+      ? exp.letter.data
+      : Buffer.from(exp.letter.data.buffer ?? exp.letter.data);
+    res.setHeader('Content-Type', exp.letter.contentType || 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${exp.letter.filename || 'experience-letter'}"`);
+    res.setHeader('Content-Length', buffer.length);
+    return res.send(buffer);
+  } catch (err) {
+    return errorResponse(res, err.message);
+  }
+};

@@ -14,6 +14,12 @@ const experienceSchema = new mongoose.Schema(
     companyUrl: { type: String },
     displayOrder: { type: Number, default: 0 },
     isPublished: { type: Boolean, default: true },
+    letter: {
+      data: { type: Buffer, select: false },
+      contentType: { type: String },
+      filename: { type: String },
+      uploadedAt: { type: Date },
+    },
   },
   { timestamps: true }
 );

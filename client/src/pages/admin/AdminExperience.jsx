@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { FiPlus, FiEdit2, FiTrash2, FiX, FiSave, FiBriefcase } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiX, FiSave, FiBriefcase, FiFileText, FiUpload } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import api from '../../services/api.js';
 
@@ -157,6 +157,30 @@ const ExperienceForm = ({ initial, onSave, onCancel, isSaving }) => {
 const AdminExperience = () => {
   const qc = useQueryClient();
   const [editing, setEditing] = useState(null);
+  const [uploadingLetter, setUploadingLetter] = useState(null);
+  const fileInputRef = useRef(null);
+  const pendingUploadId = useRef(null);
+
+  const handleLetterClick = (id) => {
+    pendingUploadId.current = id;
+    fileInputRef.current?.click();
+  };
+
+  const handleLetterFile = async (e) => {
+    const file = e.target.files?.[0];
+    const id = pendingUploadId.current;
+    e.target.value = '';
+    if (!file || !id) return;
+    setUploadingLetter(id);
+    try {
+      const fd = new FormData();
+      fd.append('letter', file);
+      await api.post(`/experience/admin/${id}/letter`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      qc.invalidateQueries(['admin-experience']);
+      toast.success('Letter uploaded');
+    } catch { toast.error('Upload failed'); }
+    finally { setUploadingLetter(null); }
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-experience'],
@@ -198,6 +222,13 @@ const AdminExperience = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".pdf,image/*"
+        style={{ display: 'none' }}
+        onChange={handleLetterFile}
+      />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.25rem' }}>Experience</h1>
@@ -264,7 +295,20 @@ const AdminExperience = () => {
                     {formatDate(exp.startDate)} — {exp.isCurrent ? 'Present' : formatDate(exp.endDate)} · {exp.location}
                   </div>
                 </div>
-                <div style={{ display: 'flex', gap: '0.4rem', flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: '0.4rem', flexShrink: 0, alignItems: 'center' }}>
+                  {exp.letter?.uploadedAt && (
+                    <span title="Experience letter uploaded" style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem', borderRadius: '9999px', background: 'rgba(34,197,94,0.1)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                      Letter ✓
+                    </span>
+                  )}
+                  <button
+                    onClick={() => handleLetterClick(exp._id)}
+                    disabled={uploadingLetter === exp._id}
+                    title={exp.letter?.uploadedAt ? 'Replace experience letter' : 'Upload experience letter'}
+                    style={{ width: '32px', height: '32px', borderRadius: '7px', border: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: exp.letter?.uploadedAt ? '#22c55e' : 'var(--text-muted)', background: 'transparent', cursor: 'pointer', opacity: uploadingLetter === exp._id ? 0.5 : 1 }}
+                  >
+                    {uploadingLetter === exp._id ? <FiUpload size={12} /> : <FiFileText size={13} />}
+                  </button>
                   <button
                     onClick={() => setEditing(exp)}
                     style={{ width: '32px', height: '32px', borderRadius: '7px', border: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', background: 'transparent', cursor: 'pointer' }}

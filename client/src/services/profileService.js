@@ -4,6 +4,9 @@ export const RESUME_URL = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api/v1/upload/resume`
   : '/api/v1/upload/resume';
 
+const API_BASE = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api/v1` : '/api/v1';
+export const getLetterUrl = (id) => `${API_BASE}/experience/${id}/letter`;
+
 export const profileService = {
   get: () => api.get('/profile'),
   update: (data) => api.put('/profile/admin', data),

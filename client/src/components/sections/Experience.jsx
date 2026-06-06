@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiMapPin, FiCalendar, FiChevronDown } from 'react-icons/fi';
+import { FiMapPin, FiCalendar, FiChevronDown, FiFileText, FiX } from 'react-icons/fi';
 import SectionHeader from '../shared/SectionHeader.jsx';
 import { staggerChild } from '../../utils/animations.js';
 import api from '../../services/api.js';
+import { getLetterUrl } from '../../services/profileService.js';
 import oreezoLogo from '../../assets/Oreezo-logo.webp';
 import potensLogo from '../../assets/Potens-logo.webp';
 import byteifyLogo from '../../assets/Byteify-technologies-logo.webp';
@@ -83,8 +84,50 @@ const fallbackExperiences = [
   },
 ];
 
+const LetterModal = ({ experience, onClose }) => {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.25rem' }}
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.2 }}
+        style={{ width: '100%', maxWidth: '860px', height: '90vh', background: 'var(--bg-elevated)', borderRadius: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 24px 64px rgba(0,0,0,0.5)' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div style={{ padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-default)', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <FiFileText size={16} style={{ color: 'var(--accent)' }} />
+            <span style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--text-primary)' }}>
+              Experience Letter — {experience.company}
+            </span>
+          </div>
+          <button onClick={onClose} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid var(--border-default)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+            <FiX size={16} />
+          </button>
+        </div>
+        <iframe
+          src={getLetterUrl(experience._id)}
+          title={`${experience.company} experience letter`}
+          style={{ flex: 1, border: 'none', width: '100%', background: '#fff' }}
+        />
+      </motion.div>
+    </div>
+  );
+};
+
 const AccordionCard = ({ experience, index, defaultOpen }) => {
   const [open, setOpen] = useState(defaultOpen);
+  const [letterOpen, setLetterOpen] = useState(false);
   const color = typeColor[experience.type] ?? 'var(--accent)';
   const logo = companyLogos[experience.company];
   const initials = experience.company.split(' ').slice(0, 2).map((w) => w[0]).join('');
@@ -174,24 +217,40 @@ const AccordionCard = ({ experience, index, defaultOpen }) => {
                   ))}
                 </ul>
 
-                {/* Company logo */}
-                <div style={{
-                  width: '180px', height: '120px', flexShrink: 0,
-                  borderRadius: '10px', border: '1px solid var(--border-default)',
-                  background: 'var(--bg-elevated)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  padding: '14px', overflow: 'hidden',
-                }}>
-                  {logo ? (
-                    <img
-                      src={logo}
-                      alt={experience.company}
-                      style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-                    />
-                  ) : (
-                    <span style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.03em' }}>
-                      {initials}
-                    </span>
+                {/* Company logo + letter button */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'center', flexShrink: 0 }}>
+                  <div style={{
+                    width: '180px', height: '120px',
+                    borderRadius: '10px', border: '1px solid var(--border-default)',
+                    background: 'var(--bg-elevated)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    padding: '14px', overflow: 'hidden',
+                  }}>
+                    {logo ? (
+                      <img
+                        src={logo}
+                        alt={experience.company}
+                        style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                      />
+                    ) : (
+                      <span style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.03em' }}>
+                        {initials}
+                      </span>
+                    )}
+                  </div>
+                  {experience.letter?.uploadedAt && (
+                    <button
+                      onClick={() => setLetterOpen(true)}
+                      style={{
+                        width: '180px', padding: '0.5rem 0.75rem',
+                        borderRadius: '8px', border: '1px solid var(--accent-border)',
+                        background: 'var(--accent-bg)', color: 'var(--accent)',
+                        cursor: 'pointer', fontSize: '0.8125rem', fontWeight: 600,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
+                      }}
+                    >
+                      <FiFileText size={13} /> View Letter
+                    </button>
                   )}
                 </div>
               </div>
@@ -200,6 +259,10 @@ const AccordionCard = ({ experience, index, defaultOpen }) => {
         )}
       </AnimatePresence>
     </motion.div>
+
+    <AnimatePresence>
+      {letterOpen && <LetterModal experience={experience} onClose={() => setLetterOpen(false)} />}
+    </AnimatePresence>
   );
 };
 
