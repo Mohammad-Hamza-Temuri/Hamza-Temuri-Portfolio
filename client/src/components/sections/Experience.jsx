@@ -85,11 +85,30 @@ const fallbackExperiences = [
 ];
 
 const LetterModal = ({ experience, onClose }) => {
+  const [blobUrl, setBlobUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [onClose]);
+
+  useEffect(() => {
+    let url;
+    let mounted = true;
+    fetch(getLetterUrl(experience._id))
+      .then((res) => { if (!res.ok) throw new Error(); return res.blob(); })
+      .then((blob) => {
+        if (!mounted) return;
+        url = URL.createObjectURL(blob);
+        setBlobUrl(url);
+        setLoading(false);
+      })
+      .catch(() => { if (mounted) { setError(true); setLoading(false); } });
+    return () => { mounted = false; if (url) URL.revokeObjectURL(url); };
+  }, [experience._id]);
 
   return (
     <div
@@ -115,11 +134,17 @@ const LetterModal = ({ experience, onClose }) => {
             <FiX size={16} />
           </button>
         </div>
-        <iframe
-          src={getLetterUrl(experience._id)}
-          title={`${experience.company} experience letter`}
-          style={{ flex: 1, border: 'none', width: '100%', background: '#fff' }}
-        />
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
+          {loading && <span style={{ color: '#888', fontSize: '0.9rem' }}>Loading…</span>}
+          {error && <span style={{ color: '#ef4444', fontSize: '0.9rem' }}>Failed to load letter.</span>}
+          {blobUrl && (
+            <iframe
+              src={blobUrl}
+              title={`${experience.company} experience letter`}
+              style={{ width: '100%', height: '100%', border: 'none' }}
+            />
+          )}
+        </div>
       </motion.div>
     </div>
   );
