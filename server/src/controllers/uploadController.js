@@ -24,14 +24,21 @@ export const uploadImage = async (req, res) => {
 export const uploadResume = async (req, res) => {
   try {
     if (!req.file) return errorResponse(res, 'No file provided', 400);
-    const b64 = Buffer.from(req.file.buffer).toString('base64');
-    const dataURI = `data:${req.file.mimetype};base64,${b64}`;
-    const result = await cloudinary.uploader.upload(dataURI, {
-      public_id: 'hamza-portfolio/resume/hamza-temuri-resume.pdf',
-      resource_type: 'raw',
-      overwrite: true,
-    });
-    return successResponse(res, { url: result.secure_url, publicId: result.public_id }, 'Resume uploaded');
+    const profile = await Profile.findOne();
+    const doc = profile || await Profile.create({});
+    doc.resume = {
+      data: req.file.buffer,
+      contentType: req.file.mimetype || 'application/pdf',
+      filename: req.file.originalname || 'resume.pdf',
+      size: req.file.size,
+      uploadedAt: new Date(),
+    };
+    await doc.save();
+    return successResponse(res, {
+      filename: doc.resume.filename,
+      size: doc.resume.size,
+      uploadedAt: doc.resume.uploadedAt,
+    }, 'Resume uploaded');
   } catch (err) {
     return errorResponse(res, err.message);
   }
@@ -39,15 +46,15 @@ export const uploadResume = async (req, res) => {
 
 export const getResumeDownload = async (req, res) => {
   try {
-    const profile = await Profile.findOne().select('resume').lean();
-    if (!profile?.resume?.publicId) return res.status(404).json({ message: 'No resume uploaded' });
-    const signedUrl = cloudinary.url(profile.resume.publicId, {
-      resource_type: 'raw',
-      type: 'upload',
-      sign_url: true,
-      expires_at: Math.floor(Date.now() / 1000) + 600,
-    });
-    return res.redirect(signedUrl);
+    const profile = await Profile.findOne().select('+resume.data resume.contentType resume.filename').lean();
+    if (!profile?.resume?.data) return res.status(404).json({ message: 'No resume uploaded' });
+    const buffer = Buffer.isBuffer(profile.resume.data)
+      ? profile.resume.data
+      : Buffer.from(profile.resume.data.buffer ?? profile.resume.data);
+    res.setHeader('Content-Type', profile.resume.contentType || 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${profile.resume.filename || 'hamza-temuri-resume.pdf'}"`);
+    res.setHeader('Content-Length', buffer.length);
+    return res.send(buffer);
   } catch (err) {
     return errorResponse(res, err.message);
   }

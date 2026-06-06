@@ -13,8 +13,10 @@ const profileSchema = new mongoose.Schema(
       publicId: { type: String, default: '' },
     },
     resume: {
-      url: { type: String, default: '' },
-      publicId: { type: String, default: '' },
+      data: { type: Buffer, select: false },
+      contentType: { type: String, default: 'application/pdf' },
+      filename: { type: String, default: '' },
+      size: { type: Number, default: 0 },
       uploadedAt: { type: Date },
     },
     social: {
