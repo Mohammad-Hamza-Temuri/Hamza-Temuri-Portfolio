@@ -16,9 +16,10 @@ const label = (text) => (
   </label>
 );
 
-const ExperienceForm = ({ initial, onSave, onCancel, isSaving }) => {
+const ExperienceForm = ({ initial, onSave, onCancel, isSaving, onLetterUpload, letterUploading, letterMeta }) => {
   const [responsibilities, setResponsibilities] = useState(initial?.responsibilities || []);
   const [respInput, setRespInput] = useState('');
+  const letterInputRef = useRef(null);
   const { register, handleSubmit, watch } = useForm({
     defaultValues: {
       company: initial?.company || '',
@@ -142,6 +143,29 @@ const ExperienceForm = ({ initial, onSave, onCancel, isSaving }) => {
         </label>
       </div>
 
+      {!!initial && (
+        <div style={{ padding: '1rem', background: 'var(--bg-subtle)', borderRadius: '10px', border: '1px solid var(--border-default)' }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <FiFileText size={13} /> Experience Letter
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+            {letterMeta?.uploadedAt ? (
+              <span style={{ fontSize: '0.8125rem', color: '#22c55e', fontWeight: 600 }}>
+                ✓ {letterMeta.filename || 'letter'} &nbsp;·&nbsp; {new Date(letterMeta.uploadedAt).toLocaleDateString()}
+              </span>
+            ) : (
+              <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>No letter uploaded yet</span>
+            )}
+            <input ref={letterInputRef} type="file" accept=".pdf,image/*" style={{ display: 'none' }}
+              onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) onLetterUpload(f); }} />
+            <button type="button" onClick={() => letterInputRef.current?.click()} disabled={letterUploading}
+              className="btn-ghost" style={{ padding: '0.35rem 0.85rem', fontSize: '0.8125rem', opacity: letterUploading ? 0.6 : 1 }}>
+              <FiUpload size={12} /> {letterUploading ? 'Uploading…' : letterMeta?.uploadedAt ? 'Replace' : 'Upload Letter'}
+            </button>
+          </div>
+        </div>
+      )}
+
       <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', paddingTop: '0.5rem', borderTop: '1px solid var(--border-subtle)' }}>
         <button type="button" onClick={onCancel} className="btn-ghost" style={{ padding: '0.55rem 1.25rem', fontSize: '0.875rem' }}>
           <FiX size={14} /> Cancel
@@ -218,8 +242,24 @@ const AdminExperience = () => {
   const qc = useQueryClient();
   const [editing, setEditing] = useState(null);
   const [uploadingLetter, setUploadingLetter] = useState(null);
+  const [formLetterMeta, setFormLetterMeta] = useState(null);
   const fileInputRef = useRef(null);
   const pendingUploadId = useRef(null);
+
+  const handleFormLetterUpload = async (file) => {
+    if (!editing?._id) return;
+    setUploadingLetter(editing._id);
+    try {
+      const fd = new FormData();
+      fd.append('letter', file);
+      const res = await api.post(`/experience/admin/${editing._id}/letter`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const meta = res.data?.data ?? { uploadedAt: new Date(), filename: file.name };
+      setFormLetterMeta(meta);
+      qc.invalidateQueries(['admin-experience']);
+      toast.success('Letter uploaded');
+    } catch { toast.error('Upload failed'); }
+    finally { setUploadingLetter(null); }
+  };
 
   const handleLetterClick = (id) => {
     pendingUploadId.current = id;
@@ -258,6 +298,7 @@ const AdminExperience = () => {
       qc.invalidateQueries(['experience']);
       toast.success(editing?._id ? 'Experience updated' : 'Experience added');
       setEditing(null);
+      setFormLetterMeta(null);
     },
     onError: () => toast.error('Failed to save'),
   });
@@ -303,20 +344,15 @@ const AdminExperience = () => {
       </div>
 
       {editing && (
-        <>
-          <ExperienceForm
-            initial={editing._id ? editing : undefined}
-            onSave={(body) => saveMutation.mutate(body)}
-            onCancel={() => setEditing(null)}
-            isSaving={saveMutation.isPending}
-          />
-          {editing._id && (
-            <LetterUploadCard
-              experience={editing}
-              onDone={() => qc.invalidateQueries(['admin-experience'])}
-            />
-          )}
-        </>
+        <ExperienceForm
+          initial={editing._id ? editing : undefined}
+          onSave={(body) => saveMutation.mutate(body)}
+          onCancel={() => { setEditing(null); setFormLetterMeta(null); }}
+          isSaving={saveMutation.isPending}
+          onLetterUpload={handleFormLetterUpload}
+          letterUploading={uploadingLetter === editing._id}
+          letterMeta={formLetterMeta}
+        />
       )}
 
       {isLoading ? (
@@ -379,7 +415,7 @@ const AdminExperience = () => {
                     {uploadingLetter === exp._id ? <FiUpload size={12} /> : <FiFileText size={13} />}
                   </button>
                   <button
-                    onClick={() => setEditing(exp)}
+                    onClick={() => { setEditing(exp); setFormLetterMeta(exp.letter?.uploadedAt ? exp.letter : null); }}
                     style={{ width: '32px', height: '32px', borderRadius: '7px', border: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', background: 'transparent', cursor: 'pointer' }}
                   >
                     <FiEdit2 size={13} />
