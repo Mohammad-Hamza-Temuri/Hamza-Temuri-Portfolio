@@ -121,27 +121,6 @@ const AccordionCard = ({ experience, index, defaultOpen }) => {
           </p>
         </div>
 
-        {/* Company logo — always visible */}
-        <div style={{
-          width: '130px', height: '68px', flexShrink: 0,
-          borderRadius: '8px', border: '1px solid var(--border-default)',
-          background: 'var(--bg-elevated)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          padding: '6px', overflow: 'hidden',
-        }}>
-          {logo ? (
-            <img
-              src={logo}
-              alt={experience.company}
-              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-            />
-          ) : (
-            <span style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.03em' }}>
-              {initials}
-            </span>
-          )}
-        </div>
-
         {/* Meta: date / location / type — hidden on mobile */}
         <div className="exp-meta" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.3rem', whiteSpace: 'nowrap' }}>
@@ -186,13 +165,36 @@ const AccordionCard = ({ experience, index, defaultOpen }) => {
             style={{ overflow: 'hidden' }}
           >
             <div style={{ padding: '0 1.5rem 1.5rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '1.25rem' }}>
-              <ul style={{ paddingLeft: '1.25rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                {experience.responsibilities?.map((r, i) => (
-                  <li key={i} style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                    {r}
-                  </li>
-                ))}
-              </ul>
+              <div className="exp-content-grid" style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '2rem', alignItems: 'start' }}>
+                <ul style={{ paddingLeft: '1.25rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  {experience.responsibilities?.map((r, i) => (
+                    <li key={i} style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                      {r}
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Company logo */}
+                <div style={{
+                  width: '180px', height: '120px', flexShrink: 0,
+                  borderRadius: '10px', border: '1px solid var(--border-default)',
+                  background: 'var(--bg-elevated)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  padding: '14px', overflow: 'hidden',
+                }}>
+                  {logo ? (
+                    <img
+                      src={logo}
+                      alt={experience.company}
+                      style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                    />
+                  ) : (
+                    <span style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.03em' }}>
+                      {initials}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
           </motion.div>
         )}
@@ -232,6 +234,7 @@ const Experience = () => {
       <style>{`
         @media(max-width:640px) {
           .exp-meta { display: none !important; }
+          .exp-content-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </section>
