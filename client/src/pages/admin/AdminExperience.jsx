@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
@@ -16,19 +16,9 @@ const label = (text) => (
   </label>
 );
 
-const ExperienceForm = ({ initial, onSave, onCancel, isSaving, onLetterUpload, isUploadingLetter }) => {
+const ExperienceForm = ({ initial, onSave, onCancel, isSaving }) => {
   const [responsibilities, setResponsibilities] = useState(initial?.responsibilities || []);
   const [respInput, setRespInput] = useState('');
-  const [letterMeta, setLetterMeta] = useState(initial?.letter?.uploadedAt ? initial.letter : null);
-  const letterInputRef = useRef(null);
-
-  const handleLetterChange = async (e) => {
-    const file = e.target.files?.[0];
-    e.target.value = '';
-    if (!file) return;
-    const result = await onLetterUpload(file);
-    if (result) setLetterMeta(result);
-  };
   const { register, handleSubmit, watch } = useForm({
     defaultValues: {
       company: initial?.company || '',
@@ -152,42 +142,6 @@ const ExperienceForm = ({ initial, onSave, onCancel, isSaving, onLetterUpload, i
         </label>
       </div>
 
-      {initial?._id && (
-        <div style={{ paddingTop: '0.75rem', borderTop: '1px solid var(--border-subtle)' }}>
-          {label('Experience Letter')}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            {letterMeta?.uploadedAt ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
-                <FiFileText size={14} style={{ color: '#22c55e', flexShrink: 0 }} />
-                <span style={{ color: '#22c55e', fontWeight: 600 }}>Uploaded</span>
-                <span style={{ color: 'var(--text-muted)' }}>
-                  · {letterMeta.filename || 'experience-letter'} · {new Date(letterMeta.uploadedAt).toLocaleDateString()}
-                </span>
-              </div>
-            ) : (
-              <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>No letter uploaded yet</span>
-            )}
-            <input
-              ref={letterInputRef}
-              type="file"
-              accept=".pdf,image/*"
-              style={{ display: 'none' }}
-              onChange={handleLetterChange}
-            />
-            <button
-              type="button"
-              onClick={() => letterInputRef.current?.click()}
-              disabled={isUploadingLetter}
-              className="btn-ghost"
-              style={{ padding: '0.4rem 0.9rem', fontSize: '0.8125rem', opacity: isUploadingLetter ? 0.6 : 1 }}
-            >
-              <FiUpload size={13} />
-              {isUploadingLetter ? 'Uploading…' : letterMeta?.uploadedAt ? 'Replace Letter' : 'Upload Letter'}
-            </button>
-          </div>
-        </div>
-      )}
-
       <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', paddingTop: '0.5rem', borderTop: '1px solid var(--border-subtle)' }}>
         <button type="button" onClick={onCancel} className="btn-ghost" style={{ padding: '0.55rem 1.25rem', fontSize: '0.875rem' }}>
           <FiX size={14} /> Cancel
@@ -197,6 +151,66 @@ const ExperienceForm = ({ initial, onSave, onCancel, isSaving, onLetterUpload, i
         </button>
       </div>
     </form>
+  );
+};
+
+const LetterUploadCard = ({ experience, onDone }) => {
+  const [uploading, setUploading] = useState(false);
+  const [meta, setMeta] = useState(experience?.letter?.uploadedAt ? experience.letter : null);
+  const inputRef = useRef(null);
+
+  const handleFile = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('letter', file);
+      const res = await api.post(`/experience/admin/${experience._id}/letter`, fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setMeta(res.data?.data ?? { uploadedAt: new Date(), filename: file.name });
+      onDone();
+      toast.success('Letter uploaded');
+    } catch { toast.error('Upload failed'); }
+    finally { setUploading(false); }
+  };
+
+  return (
+    <div className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <FiFileText size={15} style={{ color: 'var(--accent)' }} />
+        <span style={{ fontWeight: 700, fontSize: '0.9375rem' }}>Experience Letter</span>
+        <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>— {experience.company}</span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+        {meta?.uploadedAt ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem' }}>
+            <span style={{ color: '#22c55e', fontWeight: 600 }}>✓ Uploaded</span>
+            <span style={{ color: 'var(--text-muted)' }}>
+              · {meta.filename || 'letter'} · {new Date(meta.uploadedAt).toLocaleDateString()}
+            </span>
+          </div>
+        ) : (
+          <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>No letter uploaded yet.</span>
+        )}
+        <input ref={inputRef} type="file" accept=".pdf,image/*" style={{ display: 'none' }} onChange={handleFile} />
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          className="btn-ghost"
+          style={{ padding: '0.45rem 1rem', fontSize: '0.8125rem', opacity: uploading ? 0.6 : 1 }}
+        >
+          <FiUpload size={13} />
+          {uploading ? 'Uploading…' : meta?.uploadedAt ? 'Replace Letter' : 'Upload Letter'}
+        </button>
+      </div>
+      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
+        Accepts PDF or image (PNG/JPG). Max 10 MB.
+      </p>
+    </div>
   );
 };
 
@@ -228,19 +242,6 @@ const AdminExperience = () => {
     finally { setUploadingLetter(null); }
   };
 
-  const handleLetterFromForm = useCallback(async (file) => {
-    if (!editing?._id) return null;
-    setUploadingLetter(editing._id);
-    try {
-      const fd = new FormData();
-      fd.append('letter', file);
-      const res = await api.post(`/experience/admin/${editing._id}/letter`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-      qc.invalidateQueries(['admin-experience']);
-      toast.success('Letter uploaded');
-      return res.data?.data ?? null;
-    } catch { toast.error('Upload failed'); return null; }
-    finally { setUploadingLetter(null); }
-  }, [editing, qc]);
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-experience'],
@@ -302,14 +303,20 @@ const AdminExperience = () => {
       </div>
 
       {editing && (
-        <ExperienceForm
-          initial={editing._id ? editing : undefined}
-          onSave={(body) => saveMutation.mutate(body)}
-          onCancel={() => setEditing(null)}
-          isSaving={saveMutation.isPending}
-          onLetterUpload={handleLetterFromForm}
-          isUploadingLetter={uploadingLetter === editing._id}
-        />
+        <>
+          <ExperienceForm
+            initial={editing._id ? editing : undefined}
+            onSave={(body) => saveMutation.mutate(body)}
+            onCancel={() => setEditing(null)}
+            isSaving={saveMutation.isPending}
+          />
+          {editing._id && (
+            <LetterUploadCard
+              experience={editing}
+              onDone={() => qc.invalidateQueries(['admin-experience'])}
+            />
+          )}
+        </>
       )}
 
       {isLoading ? (
