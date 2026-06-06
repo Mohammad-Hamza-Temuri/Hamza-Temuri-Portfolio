@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiMapPin, FiCalendar, FiChevronDown, FiFileText, FiX } from 'react-icons/fi';
+import { FiMapPin, FiCalendar, FiChevronDown, FiFileText, FiX, FiExternalLink } from 'react-icons/fi';
 import SectionHeader from '../shared/SectionHeader.jsx';
 import { staggerChild } from '../../utils/animations.js';
 import api from '../../services/api.js';
@@ -88,6 +88,14 @@ const LetterModal = ({ experience, onClose }) => {
   const [blobUrl, setBlobUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -111,6 +119,8 @@ const LetterModal = ({ experience, onClose }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [experience._id]);
 
+  const isPdf = blobUrl && !blobUrl.isImage;
+
   return (
     <div
       style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.25rem' }}
@@ -131,9 +141,21 @@ const LetterModal = ({ experience, onClose }) => {
               Experience Letter — {experience.company}
             </span>
           </div>
-          <button onClick={onClose} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid var(--border-default)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
-            <FiX size={16} />
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {isPdf && (
+              <a
+                href={blobUrl.url}
+                download={`${experience.company}-experience-letter.pdf`}
+                style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid var(--border-default)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', textDecoration: 'none' }}
+                title="Download PDF"
+              >
+                <FiExternalLink size={14} />
+              </a>
+            )}
+            <button onClick={onClose} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid var(--border-default)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+              <FiX size={16} />
+            </button>
+          </div>
         </div>
         <div style={{ flex: 1, overflow: 'auto', background: '#fff', display: 'flex', alignItems: blobUrl?.isImage ? 'flex-start' : 'stretch' }}>
           {loading && <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ color: '#888', fontSize: '0.9rem' }}>Loading…</span></div>}
@@ -145,6 +167,26 @@ const LetterModal = ({ experience, onClose }) => {
                 alt={`${experience.company} experience letter`}
                 style={{ width: '100%', height: 'auto', display: 'block' }}
               />
+            ) : isMobile ? (
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.25rem', padding: '2rem', background: '#f9f9f9' }}>
+                <FiFileText size={52} style={{ color: '#6366f1', opacity: 0.6 }} />
+                <p style={{ color: '#555', textAlign: 'center', margin: 0, fontSize: '0.9rem', lineHeight: 1.6 }}>
+                  PDF preview isn't available inline on mobile.
+                </p>
+                <a
+                  href={blobUrl.url}
+                  download={`${experience.company}-experience-letter.pdf`}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                    padding: '0.75rem 1.75rem', borderRadius: '10px',
+                    background: '#6366f1', color: '#fff',
+                    fontWeight: 700, fontSize: '0.9375rem',
+                    textDecoration: 'none',
+                  }}
+                >
+                  <FiExternalLink size={15} /> Open / Download PDF
+                </a>
+              </div>
             ) : (
               <iframe
                 src={blobUrl.url}
