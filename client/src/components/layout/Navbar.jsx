@@ -2,11 +2,19 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiSun, FiMoon, FiMenu, FiX, FiDownload } from 'react-icons/fi';
+import { useQuery } from '@tanstack/react-query';
 import { useThemeStore } from '../../store/themeStore.js';
 import { navLinks } from '../../constants/navigation.js';
+import { profileService } from '../../services/profileService.js';
 
 const Navbar = () => {
   const { theme, toggleTheme } = useThemeStore();
+  const { data: profileData } = useQuery({
+    queryKey: ['profile'],
+    queryFn: () => profileService.get().then((r) => r.data),
+    staleTime: 10 * 60 * 1000,
+  });
+  const resumeUrl = profileData?.resume?.url || '/resume.pdf';
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -119,7 +127,7 @@ const Navbar = () => {
 
             {/* Resume */}
             <a
-              href="/resume.pdf"
+              href={resumeUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-ghost hidden-mobile"
@@ -186,7 +194,7 @@ const Navbar = () => {
               </a>
             ))}
             <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-subtle)' }}>
-              <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="btn-ghost" style={{ flex: 1, justifyContent: 'center', fontSize: '0.875rem' }}>
+              <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="btn-ghost" style={{ flex: 1, justifyContent: 'center', fontSize: '0.875rem' }}>
                 <FiDownload size={14} /> Resume
               </a>
               <a href="#contact" onClick={(e) => { e.preventDefault(); handleNavClick('#contact'); }} className="btn-primary" style={{ flex: 1, justifyContent: 'center', fontSize: '0.875rem' }}>

@@ -23,7 +23,13 @@ export const uploadImage = async (req, res) => {
 export const uploadResume = async (req, res) => {
   try {
     if (!req.file) return errorResponse(res, 'No file provided', 400);
-    const result = await uploadBuffer(req.file.buffer, req.file.mimetype, 'resume', 'raw');
+    const b64 = Buffer.from(req.file.buffer).toString('base64');
+    const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+    const result = await cloudinary.uploader.upload(dataURI, {
+      public_id: 'hamza-portfolio/resume/hamza-temuri-resume.pdf',
+      resource_type: 'raw',
+      overwrite: true,
+    });
     return successResponse(res, { url: result.secure_url, publicId: result.public_id }, 'Resume uploaded');
   } catch (err) {
     return errorResponse(res, err.message);
