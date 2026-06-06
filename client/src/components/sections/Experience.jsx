@@ -9,12 +9,14 @@ import oreezoLogo from '../../assets/Oreezo-logo.webp';
 import potensLogo from '../../assets/Potens-logo.webp';
 import byteifyLogo from '../../assets/Byteify-technologies-logo.webp';
 import sevenStarLogo from '../../assets/7-star-solutions.webp';
+import techTeamsLogo from '../../assets/Tech-Teams-logo.webp';
 
 const companyLogos = {
   'Oreezo Digital Agency': oreezoLogo,
   'Potens Digital': potensLogo,
   '7Star Solutions': sevenStarLogo,
   'Byteify Technologies': byteifyLogo,
+  'Tech Teams': techTeamsLogo,
 };
 
 const typeLabel = { remote: 'Remote', hybrid: 'Hybrid', onsite: 'Onsite' };
