@@ -133,6 +133,7 @@ const AccordionCard = ({ experience, index, defaultOpen }) => {
   const initials = experience.company.split(' ').slice(0, 2).map((w) => w[0]).join('');
 
   return (
+    <>
     <motion.div {...staggerChild(index)} className="card" style={{ overflow: 'hidden' }}>
       {/* Clickable header */}
       <button
@@ -263,6 +264,7 @@ const AccordionCard = ({ experience, index, defaultOpen }) => {
     <AnimatePresence>
       {letterOpen && <LetterModal experience={experience} onClose={() => setLetterOpen(false)} />}
     </AnimatePresence>
+    </>
   );
 };
 
