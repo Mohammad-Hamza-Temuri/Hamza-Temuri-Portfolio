@@ -103,11 +103,12 @@ const LetterModal = ({ experience, onClose }) => {
       .then((blob) => {
         if (!mounted) return;
         url = URL.createObjectURL(blob);
-        setBlobUrl(url);
+        setBlobUrl({ url, isImage: blob.type.startsWith('image/') });
         setLoading(false);
       })
       .catch(() => { if (mounted) { setError(true); setLoading(false); } });
     return () => { mounted = false; if (url) URL.revokeObjectURL(url); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [experience._id]);
 
   return (
@@ -138,11 +139,19 @@ const LetterModal = ({ experience, onClose }) => {
           {loading && <span style={{ color: '#888', fontSize: '0.9rem' }}>Loading…</span>}
           {error && <span style={{ color: '#ef4444', fontSize: '0.9rem' }}>Failed to load letter.</span>}
           {blobUrl && (
-            <iframe
-              src={blobUrl}
-              title={`${experience.company} experience letter`}
-              style={{ width: '100%', height: '100%', border: 'none' }}
-            />
+            blobUrl.isImage ? (
+              <img
+                src={blobUrl.url}
+                alt={`${experience.company} experience letter`}
+                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', display: 'block' }}
+              />
+            ) : (
+              <iframe
+                src={blobUrl.url}
+                title={`${experience.company} experience letter`}
+                style={{ width: '100%', height: '100%', border: 'none' }}
+              />
+            )
           )}
         </div>
       </motion.div>
