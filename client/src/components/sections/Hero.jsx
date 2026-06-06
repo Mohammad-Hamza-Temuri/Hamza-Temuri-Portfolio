@@ -140,7 +140,7 @@ const Hero = ({ profile }) => {
               <button className="btn-secondary" onClick={() => handleScroll('projects')} style={{ fontSize: '1rem', padding: '0.85rem 2rem' }}>
                 View Projects
               </button>
-              <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="btn-ghost" style={{ fontSize: '1rem', padding: '0.85rem 2rem' }}>
+              <a href={profile?.resume?.url || '/resume.pdf'} target="_blank" rel="noopener noreferrer" className="btn-ghost" style={{ fontSize: '1rem', padding: '0.85rem 2rem' }}>
                 <FiDownload size={16} /> Resume
               </a>
             </motion.div>

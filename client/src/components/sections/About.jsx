@@ -12,7 +12,7 @@ const strengths = [
   'Clean, maintainable code with long-term support',
 ];
 
-const About = () => {
+const About = ({ profile }) => {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 768px)');
@@ -43,7 +43,7 @@ const About = () => {
             <button className="btn-primary" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
               Work With Me <FiArrowRight size={15} />
             </button>
-            <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="btn-ghost">View Resume</a>
+            <a href={profile?.resume?.url || '/resume.pdf'} target="_blank" rel="noopener noreferrer" className="btn-ghost">View Resume</a>
           </div>
         </motion.div>
 
