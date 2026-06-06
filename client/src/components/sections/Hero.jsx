@@ -193,7 +193,6 @@ const Hero = ({ profile }) => {
       </div>
       <style>{`
         @media(min-width:1024px) { .hero-right { display: block !important; } }
-        @media(max-width:1023px) { .hero-avatar-mobile { display: flex !important; } }
         @media(max-width:767px) {
           .hero-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
           .hero-btns { flex-wrap: nowrap !important; gap: 0.5rem !important; }
