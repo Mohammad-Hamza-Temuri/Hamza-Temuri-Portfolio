@@ -135,21 +135,21 @@ const LetterModal = ({ experience, onClose }) => {
             <FiX size={16} />
           </button>
         </div>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
-          {loading && <span style={{ color: '#888', fontSize: '0.9rem' }}>Loading…</span>}
-          {error && <span style={{ color: '#ef4444', fontSize: '0.9rem' }}>Failed to load letter.</span>}
+        <div style={{ flex: 1, overflow: 'auto', background: '#fff', display: 'flex', alignItems: blobUrl?.isImage ? 'flex-start' : 'stretch' }}>
+          {loading && <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ color: '#888', fontSize: '0.9rem' }}>Loading…</span></div>}
+          {error && <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ color: '#ef4444', fontSize: '0.9rem' }}>Failed to load letter.</span></div>}
           {blobUrl && (
             blobUrl.isImage ? (
               <img
                 src={blobUrl.url}
                 alt={`${experience.company} experience letter`}
-                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', display: 'block' }}
+                style={{ width: '100%', height: 'auto', display: 'block' }}
               />
             ) : (
               <iframe
                 src={blobUrl.url}
                 title={`${experience.company} experience letter`}
-                style={{ width: '100%', height: '100%', border: 'none' }}
+                style={{ width: '100%', height: '100%', border: 'none', flex: 1 }}
               />
             )
           )}
