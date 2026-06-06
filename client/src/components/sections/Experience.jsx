@@ -5,6 +5,17 @@ import { FiMapPin, FiCalendar, FiChevronDown } from 'react-icons/fi';
 import SectionHeader from '../shared/SectionHeader.jsx';
 import { staggerChild } from '../../utils/animations.js';
 import api from '../../services/api.js';
+import oreezoLogo from '../../assets/Oreezo-logo.webp';
+import potensLogo from '../../assets/Potens-logo.webp';
+import byteifyLogo from '../../assets/Byteify-technologies-logo.webp';
+import sevenStarLogo from '../../assets/7-star-solutions.webp';
+
+const companyLogos = {
+  'Oreezo Digital Agency': oreezoLogo,
+  'Potens Digital': potensLogo,
+  '7Star Solutions': sevenStarLogo,
+  'Byteify Technologies': byteifyLogo,
+};
 
 const typeLabel = { remote: 'Remote', hybrid: 'Hybrid', onsite: 'Onsite' };
 const typeColor = { remote: '#22c55e', hybrid: '#f59e0b', onsite: '#6366f1' };
@@ -73,6 +84,8 @@ const fallbackExperiences = [
 const AccordionCard = ({ experience, index, defaultOpen }) => {
   const [open, setOpen] = useState(defaultOpen);
   const color = typeColor[experience.type] ?? 'var(--accent)';
+  const logo = companyLogos[experience.company];
+  const initials = experience.company.split(' ').slice(0, 2).map((w) => w[0]).join('');
 
   return (
     <motion.div {...staggerChild(index)} className="card" style={{ overflow: 'hidden' }}>
@@ -106,7 +119,28 @@ const AccordionCard = ({ experience, index, defaultOpen }) => {
           </p>
         </div>
 
-        {/* Right: meta + chevron */}
+        {/* Company logo — always visible */}
+        <div style={{
+          width: '88px', height: '52px', flexShrink: 0,
+          borderRadius: '8px', border: '1px solid var(--border-default)',
+          background: 'var(--bg-elevated)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '8px', overflow: 'hidden',
+        }}>
+          {logo ? (
+            <img
+              src={logo}
+              alt={experience.company}
+              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+            />
+          ) : (
+            <span style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.03em' }}>
+              {initials}
+            </span>
+          )}
+        </div>
+
+        {/* Meta: date / location / type — hidden on mobile */}
         <div className="exp-meta" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.3rem', whiteSpace: 'nowrap' }}>
             <FiCalendar size={12} />
@@ -127,14 +161,16 @@ const AccordionCard = ({ experience, index, defaultOpen }) => {
               {typeLabel[experience.type]}
             </span>
           )}
-          <motion.div
-            animate={{ rotate: open ? 180 : 0 }}
-            transition={{ duration: 0.25 }}
-            style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', flexShrink: 0 }}
-          >
-            <FiChevronDown size={18} />
-          </motion.div>
         </div>
+
+        {/* Chevron — always visible so expand state is clear on all screen sizes */}
+        <motion.div
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.25 }}
+          style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', flexShrink: 0 }}
+        >
+          <FiChevronDown size={18} />
+        </motion.div>
       </button>
 
       {/* Expandable responsibilities */}
