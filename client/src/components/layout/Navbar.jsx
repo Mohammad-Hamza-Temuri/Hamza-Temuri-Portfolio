@@ -2,19 +2,13 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiSun, FiMoon, FiMenu, FiX, FiDownload } from 'react-icons/fi';
-import { useQuery } from '@tanstack/react-query';
 import { useThemeStore } from '../../store/themeStore.js';
 import { navLinks } from '../../constants/navigation.js';
-import { profileService } from '../../services/profileService.js';
+import { RESUME_URL } from '../../services/profileService.js';
 
 const Navbar = () => {
   const { theme, toggleTheme } = useThemeStore();
-  const { data: profileData } = useQuery({
-    queryKey: ['profile'],
-    queryFn: () => profileService.get().then((r) => r.data),
-    staleTime: 10 * 60 * 1000,
-  });
-  const resumeUrl = profileData?.resume?.url || '/resume.pdf';
+  const resumeUrl = RESUME_URL;
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);

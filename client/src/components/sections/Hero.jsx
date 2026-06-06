@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { FiArrowRight, FiDownload, FiMapPin, FiMail } from 'react-icons/fi';
 import TypewriterText from '../shared/TypewriterText.jsx';
 import myImage from '../../assets/my-image.png';
+import { RESUME_URL } from '../../services/profileService.js';
 
 const roles = ['MERN Stack Developer', 'WordPress Developer', 'Shopify Developer'];
 
@@ -140,7 +141,7 @@ const Hero = ({ profile }) => {
               <button className="btn-secondary" onClick={() => handleScroll('projects')} style={{ fontSize: '1rem', padding: '0.85rem 2rem' }}>
                 View Projects
               </button>
-              <a href={profile?.resume?.url || '/resume.pdf'} target="_blank" rel="noopener noreferrer" className="btn-ghost" style={{ fontSize: '1rem', padding: '0.85rem 2rem' }}>
+              <a href={RESUME_URL} target="_blank" rel="noopener noreferrer" className="btn-ghost" style={{ fontSize: '1rem', padding: '0.85rem 2rem' }}>
                 <FiDownload size={16} /> Resume
               </a>
             </motion.div>

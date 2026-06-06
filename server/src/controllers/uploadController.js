@@ -1,4 +1,5 @@
 import cloudinary from '../config/cloudinary.js';
+import Profile from '../models/Profile.js';
 import { successResponse, errorResponse } from '../utils/apiResponse.js';
 
 const uploadBuffer = async (buffer, mimetype, folder, resourceType = 'image') => {
@@ -31,6 +32,22 @@ export const uploadResume = async (req, res) => {
       overwrite: true,
     });
     return successResponse(res, { url: result.secure_url, publicId: result.public_id }, 'Resume uploaded');
+  } catch (err) {
+    return errorResponse(res, err.message);
+  }
+};
+
+export const getResumeDownload = async (req, res) => {
+  try {
+    const profile = await Profile.findOne().select('resume').lean();
+    if (!profile?.resume?.publicId) return res.status(404).json({ message: 'No resume uploaded' });
+    const signedUrl = cloudinary.url(profile.resume.publicId, {
+      resource_type: 'raw',
+      type: 'upload',
+      sign_url: true,
+      expires_at: Math.floor(Date.now() / 1000) + 600,
+    });
+    return res.redirect(signedUrl);
   } catch (err) {
     return errorResponse(res, err.message);
   }

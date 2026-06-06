@@ -45,7 +45,7 @@ const Home = () => {
       </Helmet>
       <Hero profile={profile} />
       <StatsBar />
-      <About profile={profile} />
+      <About />
       <Services />
       <Process />
       <Projects />

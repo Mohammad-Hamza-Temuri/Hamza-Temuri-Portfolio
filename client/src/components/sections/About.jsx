@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiCheck, FiArrowRight } from 'react-icons/fi';
 import { slideInLeft, slideInRight } from '../../utils/animations.js';
+import { RESUME_URL } from '../../services/profileService.js';
 
 const strengths = [
   'Custom WordPress & Shopify solutions for real businesses',
@@ -12,7 +13,7 @@ const strengths = [
   'Clean, maintainable code with long-term support',
 ];
 
-const About = ({ profile }) => {
+const About = () => {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 768px)');
@@ -43,7 +44,7 @@ const About = ({ profile }) => {
             <button className="btn-primary" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
               Work With Me <FiArrowRight size={15} />
             </button>
-            <a href={profile?.resume?.url || '/resume.pdf'} target="_blank" rel="noopener noreferrer" className="btn-ghost">View Resume</a>
+            <a href={RESUME_URL} target="_blank" rel="noopener noreferrer" className="btn-ghost">View Resume</a>
           </div>
         </motion.div>
 
