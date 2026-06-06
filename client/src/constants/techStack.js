@@ -1,9 +1,9 @@
 import {
   SiHtml5, SiCss, SiJavascript, SiJquery, SiBootstrap, SiTailwindcss,
   SiReact, SiNodedotjs, SiExpress, SiMongodb, SiSupabase, SiFirebase,
-  SiWordpress, SiShopify, SiGit, SiGithub, SiFigma, SiCloudinary,
+  SiWordpress, SiShopify, SiGithub, SiFigma, SiCloudinary,
+  SiOpenai, SiTrello, SiSlack, SiGoogledrive,
 } from 'react-icons/si';
-import { FaServer } from 'react-icons/fa';
 import { FiTerminal, FiCode } from 'react-icons/fi';
 
 export const techCategories = [
@@ -49,11 +49,13 @@ export const techCategories = [
     id: 'tools',
     label: 'Tools',
     items: [
-      { name: 'Git', Icon: SiGit, color: '#F05032' },
       { name: 'GitHub', Icon: SiGithub, color: '#6e40c9' },
       { name: 'Figma', Icon: SiFigma, color: '#F24E1E' },
       { name: 'Cloudinary', Icon: SiCloudinary, color: '#3448C5' },
-      { name: 'REST APIs', Icon: FaServer, color: '#6366f1' },
+      { name: 'ChatGPT', Icon: SiOpenai, color: '#10a37f' },
+      { name: 'Trello', Icon: SiTrello, color: '#0052CC' },
+      { name: 'Slack', Icon: SiSlack, color: '#4A154B' },
+      { name: 'Google Drive', Icon: SiGoogledrive, color: '#1FA463' },
       { name: 'Claude Code', Icon: FiTerminal, color: '#CC785C' },
       { name: 'Vibe Code', Icon: FiCode, color: '#0ea5e9' },
     ],
