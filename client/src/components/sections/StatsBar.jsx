@@ -16,6 +16,7 @@ const StatsBar = () => (
         {stats.map((s, i) => (
           <motion.div
             key={s.label}
+            className={s.label === 'Client Satisfaction' ? 'stat-satisfaction' : ''}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -26,7 +27,7 @@ const StatsBar = () => (
         ))}
       </div>
     </div>
-    <style>{`@media(max-width:767px){ .stats-grid { grid-template-columns: repeat(2,1fr) !important; gap: 1.5rem !important; } }`}</style>
+    <style>{`@media(max-width:767px){ .stats-grid { grid-template-columns: repeat(2,1fr) !important; gap: 1.5rem !important; } .stat-satisfaction { display: none !important; } }`}</style>
   </section>
 );
 
