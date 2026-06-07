@@ -3,7 +3,7 @@ import { useAuthStore } from '../store/authStore.js';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api/v1` : '/api/v1',
-  timeout: 15000,
+  timeout: 30000,
 });
 
 api.interceptors.request.use((config) => {

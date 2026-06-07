@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -32,13 +32,25 @@ const courtKonnect = {
 const Projects = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const { data, isLoading } = useQuery({
+  const [showWarmingMsg, setShowWarmingMsg] = useState(false);
+
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['projects'],
     queryFn: () => projectService.getAll().then((r) => r.data),
     staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    retry: 3,
+    retryDelay: (n) => Math.min(1000 * 2 ** n, 10000),
   });
 
-  const allProjects = data?.length ? data : [courtKonnect];
+  // Show a "warming up" hint after 6 s so users know why it's slow
+  useEffect(() => {
+    if (!isLoading) { setShowWarmingMsg(false); return; }
+    const t = setTimeout(() => setShowWarmingMsg(true), 6000);
+    return () => clearTimeout(t);
+  }, [isLoading]);
+
+  const allProjects = data?.length ? data : [];
   const filtered = activeFilter === 'all'
     ? allProjects
     : allProjects.filter((p) => p.category?.includes(activeFilter));
@@ -79,8 +91,22 @@ const Projects = () => {
         </div>
 
         {isLoading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.25rem' }}>
-            {[1, 2, 3].map((i) => <div key={i} className="skeleton" style={{ height: '400px', borderRadius: '12px' }} />)}
+          <>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.25rem' }}>
+              {[1, 2, 3].map((i) => <div key={i} className="skeleton" style={{ height: '400px', borderRadius: '12px' }} />)}
+            </div>
+            {showWarmingMsg && (
+              <p style={{ textAlign: 'center', marginTop: '1.25rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                Server is warming up — projects will appear shortly...
+              </p>
+            )}
+          </>
+        ) : isError ? (
+          <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
+            <p style={{ marginBottom: '1rem' }}>Could not load projects. The server may be starting up.</p>
+            <button onClick={() => refetch()} className="btn-secondary" style={{ padding: '0.6rem 1.75rem' }}>
+              Try Again
+            </button>
           </div>
         ) : (
           <AnimatePresence mode="wait">
